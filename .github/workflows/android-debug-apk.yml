@@ -29,6 +29,16 @@ jobs:
       - name: Install Android platform
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
+      - name: Validate embedded JavaScript
+        run: |
+          node <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
+          const scripts=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)].map(m=>m[1]).filter(x=>x.trim());
+          scripts.forEach((src,i)=>new vm.Script(src,{filename:'inline-'+(i+1)+'.js'}));
+          console.log('Validated '+scripts.length+' inline scripts');
+          NODE
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
