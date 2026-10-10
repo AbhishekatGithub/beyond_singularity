@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-<title>Beyond the Singularity — Mobile Performance Alpha v11</title>
+<title>Beyond the Singularity — Mobile UX Alpha v12</title>
 <style>
   :root{
     --bg:#030610;--bg2:#071127;--ink:#edf6ff;--mut:#91a4bd;--cyan:#63e8ff;--violet:#a98cff;
@@ -190,6 +190,236 @@ html.android-app .world,html.android-app .e14-world,html.android-app .e15-world,
 .bts-sheet-tab{position:absolute;right:0;top:42%;z-index:36;width:30px;height:92px;border:1px solid rgba(130,205,255,.25);border-right:0;border-radius:11px 0 0 11px;background:rgba(5,14,29,.93);color:#dff6ff;font:700 8px/1 system-ui;letter-spacing:.12em;writing-mode:vertical-rl;transform:rotate(180deg);touch-action:manipulation}
 .bts-sheet-tab.bts-sheet-active{background:rgba(20,69,91,.96);color:white}
 @media (min-width:1001px) and (pointer:fine){.bts-sheet-tab{display:none!important}}
+</style>
+
+<style id="btsMobileV12">
+:root{--bts-top:40px;--bts-bottom:20px;--bts-sheet-w:min(370px,44vw);--bts-font:12px}
+
+/* Touch targets: visually compact, physically easy to hit. */
+html.android-app .hud,html.android-app .e14-hud,html.android-app .e15-hud,html.android-app .e16-hud,html.android-app .e17-hud,html.android-app .e18-hud,html.android-app .e19-hud{
+  height:var(--bts-top)!important;min-height:var(--bts-top)!important;max-height:var(--bts-top)!important;padding:3px 8px!important;
+}
+html.android-app .iconbtn,html.android-app .e14-smallbtn,html.android-app .e15-btn,html.android-app .e16-btn,html.android-app .e17-btn,html.android-app .e18-btn,html.android-app .e19-btn{
+  min-width:38px!important;min-height:34px!important;height:34px!important;padding:4px 7px!important;font-size:9px!important;border-radius:9px!important;
+}
+html.android-app .maptools button{width:36px!important;height:36px!important;font-size:17px!important}
+html.android-app .timeline,html.android-app .e14-footer,html.android-app .e15-footer,html.android-app .e16-footer,html.android-app .e17-footer,html.android-app .e18-footer,html.android-app .e19-footer{
+  min-height:var(--bts-bottom)!important;height:var(--bts-bottom)!important;padding:2px 7px!important;
+}
+
+/* A closed side sheet takes ZERO world space. */
+html.android-app .e19-world{display:block!important}
+html.android-app .planet-stage,
+html.android-app .e15-system-stage,
+html.android-app .e16-mapstage,
+html.android-app .e17-stage,
+html.android-app .e18-stage,
+html.android-app .e19-stage{position:absolute!important;inset:0!important}
+
+html.android-app .allocation-panel,
+html.android-app .e15-side,
+html.android-app .e16-panel,
+html.android-app .e17-panel,
+html.android-app .e18-side,
+html.android-app .e19-side{
+  display:block!important;position:fixed!important;
+  top:calc(var(--bts-top) + 5px)!important;bottom:calc(var(--bts-bottom) + 5px)!important;
+  left:auto!important;right:5px!important;width:var(--bts-sheet-w)!important;height:auto!important;
+  padding:13px!important;border-radius:16px!important;overflow:auto!important;z-index:620!important;
+  transform:translate3d(calc(100% + 14px),0,0)!important;
+  visibility:hidden!important;pointer-events:none!important;
+  transition:transform 190ms cubic-bezier(.2,.82,.22,1),visibility 0s linear 190ms!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.48)!important;backdrop-filter:none!important;
+}
+html.android-app .allocation-panel.bts-sheet-open,
+html.android-app .e15-side.bts-sheet-open,
+html.android-app .e16-panel.bts-sheet-open,
+html.android-app .e17-panel.bts-sheet-open,
+html.android-app .e18-side.bts-sheet-open,
+html.android-app .e19-side.bts-sheet-open{
+  transform:translate3d(0,0,0)!important;visibility:visible!important;pointer-events:auto!important;
+  transition:transform 190ms cubic-bezier(.2,.82,.22,1),visibility 0s!important;
+}
+html.android-app .e18-side:hover{right:5px!important}
+.bts-sheet-tab{
+  position:absolute!important;right:0!important;top:50%!important;transform:translateY(-50%)!important;
+  z-index:621!important;width:39px!important;height:116px!important;min-height:116px!important;
+  border:1px solid rgba(126,210,255,.28)!important;border-right:0!important;border-radius:12px 0 0 12px!important;
+  background:rgba(5,15,31,.94)!important;color:#e4f7ff!important;font:800 9px/1 system-ui!important;
+  letter-spacing:.12em!important;writing-mode:vertical-rl!important;padding:9px 8px!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.3)!important;touch-action:none!important;
+}
+.bts-sheet-tab.bts-sheet-active{background:rgba(27,93,119,.98)!important}
+.bts-sheet-close{
+  position:sticky;top:0;float:right;z-index:5;width:36px;height:36px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.28);color:#fff;font-size:20px;line-height:1;cursor:pointer;
+}
+
+/* Side sheets use the available space instead of tiny desktop typography. */
+html.android-app .allocation-panel h2,html.android-app .e15-side h2,html.android-app .e19-selected h2{font-size:19px!important}
+html.android-app .allocation-panel h3,html.android-app .e15-block h3,html.android-app .e16-panel h3,html.android-app .e17-panel h3,html.android-app .e18-panel h3,html.android-app .e19-panel h3{
+  font-size:11px!important;letter-spacing:.1em!important;margin-bottom:7px!important;
+}
+html.android-app .allocation-panel p,html.android-app .e15-side p,html.android-app .e16-box p,html.android-app .e17-box p,html.android-app .e18-panel p,html.android-app .e19-panel p,
+html.android-app .directive-log,html.android-app .forecast,html.android-app .e19-log{font-size:11.5px!important;line-height:1.45!important}
+html.android-app .alloc-row .top,html.android-app .gov-row .top,html.android-app .e16-policy label,html.android-app .e17-panel label,
+html.android-app .e18-constant,html.android-app .e19-bias label{font-size:11px!important}
+html.android-app .allocation-panel button,html.android-app .e15-side button,html.android-app .e16-panel button,html.android-app .e17-panel button,html.android-app .e18-side button,html.android-app .e19-side button,
+html.android-app .e16-select,html.android-app .gov-select{font-size:11px!important;min-height:36px!important}
+html.android-app .e16-box,html.android-app .e17-box,html.android-app .e18-panel,html.android-app .e19-panel,html.android-app .e15-block{padding:11px!important;margin-bottom:9px!important}
+
+/* Keep technology strips usable but subordinate to the world. */
+html.android-app .e16-techbar,html.android-app .e17-techbar,html.android-app .e19-techstrip{
+  left:7px!important;right:7px!important;bottom:5px!important;height:68px!important;max-height:68px!important;padding:4px!important;gap:5px!important;overflow-x:auto!important;overflow-y:hidden!important;
+}
+html.android-app .e16-tech,html.android-app .e17-tech,html.android-app .e19-tech{
+  min-width:82px!important;max-width:82px!important;min-height:58px!important;height:58px!important;padding:5px!important;
+}
+
+/* Knowledge/node acquisition is now a compact landscape card, not a giant page. */
+html.android-app .node-reader{
+  display:grid!important;place-items:center!important;padding:7px!important;background:rgba(1,4,12,.83)!important;backdrop-filter:none!important;
+}
+html.android-app .node-reader.hidden{display:grid!important;opacity:0!important;pointer-events:none!important}
+html.android-app .reader-shell{
+  width:min(1120px,96vw)!important;height:min(440px,91vh)!important;max-width:none!important;margin:0!important;
+  border:1px solid rgba(130,201,255,.2)!important;border-radius:19px!important;overflow:hidden!important;background:#050b18!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.62)!important;
+}
+html.android-app .reader-top,
+html.android-app .e14-reader-top,html.android-app .e15-reader-top,html.android-app .e16-reader-top,html.android-app .e17-reader-top,html.android-app .e18-reader-top,html.android-app .e19-reader-top{
+  min-height:42px!important;height:42px!important;padding:4px 10px!important;backdrop-filter:none!important;
+}
+html.android-app .backbtn,html.android-app .e14-back,html.android-app .e15-back,
+html.android-app .e16-reader-top button,html.android-app .e17-reader-top button,html.android-app .e18-reader-top button,html.android-app .e19-reader-top button{
+  min-height:34px!important;padding:5px 10px!important;font-size:10px!important;
+}
+html.android-app .reader-body{
+  grid-template-columns:minmax(270px,.40fr) minmax(0,.60fr)!important;gap:12px!important;padding:10px!important;overflow:hidden!important;min-height:0!important;
+}
+html.android-app .reader-visual-wrap{position:relative!important;min-height:0!important;height:100%!important}
+html.android-app .reader-infographic{min-height:0!important;height:100%!important;border-radius:15px!important;box-shadow:none!important}
+html.android-app .reader-copy{min-height:0!important;overflow:auto!important;padding:2px 7px 52px!important}
+html.android-app .reader-copy h2{font-size:26px!important;line-height:1.02!important;margin:5px 0 7px!important}
+html.android-app .reader-summary{font-size:12px!important;line-height:1.45!important;margin:0 0 9px!important}
+html.android-app .fact-row{margin:7px 0 9px!important}
+html.android-app .fact-pill{font-size:8px!important;padding:4px 6px!important}
+html.android-app .read-section{padding:8px 0!important}
+html.android-app .read-section h3{font-size:9px!important;margin-bottom:5px!important}
+html.android-app .read-section p,html.android-app .analogy,html.android-app .reader-impact{font-size:11px!important;line-height:1.45!important}
+html.android-app .reader-actions{padding:8px 0 2px!important}
+html.android-app .reader-actions button{min-height:38px!important}
+
+/* Era 14–19 knowledge readers share the exact same card proportions. */
+html.android-app .e14-reader,html.android-app .e15-reader,html.android-app .e16-reader,
+html.android-app .e17-reader,html.android-app .e18-reader,html.android-app .e19-reader{
+  inset:4vh 2vw!important;width:auto!important;height:auto!important;border-radius:18px!important;overflow:hidden!important;
+  box-shadow:0 0 0 100vmax rgba(0,0,0,.76),0 26px 90px rgba(0,0,0,.6)!important;
+  grid-template-rows:42px 1fr!important;background-color:#050811!important;
+}
+html.android-app .e14-reader-body,html.android-app .e15-reader-body,html.android-app .e16-reader-body,
+html.android-app .e17-reader-body,html.android-app .e18-reader-body,html.android-app .e19-reader-body{
+  width:auto!important;max-width:none!important;margin:0!important;min-height:0!important;height:auto!important;
+  overflow:hidden!important;display:grid!important;grid-template-columns:minmax(260px,.39fr) minmax(0,.61fr)!important;
+  gap:12px!important;padding:10px!important;
+}
+html.android-app .e14-info-viz,html.android-app .e15-info-viz,html.android-app .e16-viz,
+html.android-app .e17-viz,html.android-app .e18-viz,html.android-app .e19-viz{
+  position:relative!important;top:0!important;height:100%!important;min-height:0!important;max-height:none!important;border-radius:15px!important;
+}
+html.android-app .e14-reader-copy,html.android-app .e15-reader-copy,html.android-app .e16-reader-copy,
+html.android-app .e17-reader-copy,html.android-app .e18-copy,html.android-app .e19-copy{
+  min-height:0!important;overflow:auto!important;padding:2px 7px 52px!important;
+}
+html.android-app .e14-reader-copy h2,html.android-app .e15-reader-copy h2,html.android-app .e16-reader-copy h2,
+html.android-app .e17-reader-copy h2,html.android-app .e18-copy h2,html.android-app .e19-copy h2{
+  font-size:25px!important;line-height:1.04!important;margin:5px 0 7px!important;
+}
+html.android-app .e14-reader-copy .lead,html.android-app .e15-reader-copy .lead,html.android-app .e16-reader-copy .lead,
+html.android-app .e17-reader-copy .lead,html.android-app .e18-copy .lead,html.android-app .e19-copy .lead{
+  font-size:12px!important;line-height:1.45!important;margin-bottom:8px!important;
+}
+html.android-app .e14-read,html.android-app .e15-read,html.android-app .e16-read,html.android-app .e17-read,
+html.android-app .e18-copy section,html.android-app .e19-read{padding:8px 0!important}
+html.android-app .e14-read h3,html.android-app .e15-read h3,html.android-app .e16-read h3,html.android-app .e17-read h3,
+html.android-app .e18-copy section h3,html.android-app .e19-read h3{font-size:9px!important;margin:0 0 5px!important}
+html.android-app .e14-read p,html.android-app .e15-read p,html.android-app .e16-read p,html.android-app .e17-read p,
+html.android-app .e18-copy section p,html.android-app .e19-read p,
+html.android-app .e14-analogy,html.android-app .e14-impact,html.android-app .e15-analogy,html.android-app .e15-impact,
+html.android-app .e16-analogy,html.android-app .e16-impact,html.android-app .e17-analogy,html.android-app .e17-impact,
+html.android-app .e18-impact,html.android-app .e19-analogy,html.android-app .e19-impact{
+  font-size:10.8px!important;line-height:1.43!important;
+}
+html.android-app .e14-buy,html.android-app .e14-tunnel,html.android-app .e15-buy,html.android-app .e16-buy,
+html.android-app .e17-buy,html.android-app .e18-buy,html.android-app .e19-buy{min-height:38px!important;padding:8px 12px!important;font-size:11px!important}
+
+/* Active Play: tiny persistent handle, smooth transient drawer. */
+html.android-app #v10Dock{
+  width:min(660px,92vw)!important;bottom:0!important;padding:30px 9px 8px!important;gap:7px!important;
+  transform:translate(-50%,calc(100% - 22px))!important;transition:transform 190ms cubic-bezier(.2,.84,.2,1)!important;
+  box-shadow:0 -7px 28px rgba(0,0,0,.35)!important;backdrop-filter:none!important;
+}
+html.android-app #v10Dock.v10-dock-open{transform:translate(-50%,0)!important}
+html.android-app #v10DockHandle{
+  top:-9px!important;height:40px!important;min-height:40px!important;min-width:150px!important;padding:7px 18px!important;
+  border:1px solid rgba(122,201,255,.23)!important;border-radius:13px!important;background:rgba(7,18,38,.96)!important;
+  font-size:9px!important;letter-spacing:.12em!important;
+}
+html.android-app #v10Dock button:not(#v10DockHandle){min-height:36px!important;padding:7px 10px!important;font-size:10px!important}
+html.android-app .v10-meter{width:120px!important}
+
+/* Active mini-games stay in aspect with the rest of the phone UI. */
+html.android-app .v10-overlay{padding:7px!important}
+html.android-app .v10-card{width:min(820px,94vw)!important;max-height:88vh!important;padding:12px!important;border-radius:18px!important}
+html.android-app .v10-card h2{font-size:25px!important;margin:6px 0!important}
+html.android-app .v10-card .lead{font-size:11.5px!important;line-height:1.4!important;margin:5px 0!important}
+html.android-app .v10-game{min-height:0!important;height:min(190px,48vh)!important;padding:10px!important;margin-top:9px!important;border-radius:14px!important}
+html.android-app .v10-orbit{width:160px!important;height:160px!important;margin:-2px auto 0!important}
+html.android-app .v10-actions{margin-top:8px!important}
+html.android-app .v10-actions button{min-height:36px!important;font-size:10px!important}
+html.android-app .v10-sliders{gap:6px!important}
+html.android-app .v10-slider-row{padding:6px!important}
+
+/* Intro / main menu */
+#btsBoot{position:fixed;inset:0;z-index:5000;background:#02050c;display:grid;place-items:center;overflow:hidden;color:#edf7ff;font-family:Inter,system-ui,sans-serif;opacity:1;transition:opacity .28s ease}
+#btsBoot.bts-hidden{opacity:0;pointer-events:none}
+#btsBootCanvas{position:absolute;inset:0;width:100%;height:100%}
+.bts-intro-glow{position:absolute;width:42vw;height:42vw;border-radius:50%;background:radial-gradient(circle,rgba(86,209,255,.19),rgba(93,79,230,.07) 35%,transparent 68%);animation:btsIntroPulse 2.4s ease-in-out infinite}
+@keyframes btsIntroPulse{50%{transform:scale(1.12);opacity:.72}}
+.bts-menu-card{position:relative;width:min(760px,88vw);height:min(330px,82vh);border:1px solid rgba(129,204,255,.23);border-radius:24px;background:linear-gradient(155deg,rgba(10,22,47,.95),rgba(4,8,19,.97));box-shadow:0 28px 100px rgba(0,0,0,.62);display:grid;grid-template-columns:.9fr 1.1fr;overflow:hidden;opacity:0;transform:translateY(14px) scale(.985);transition:.45s cubic-bezier(.2,.8,.2,1)}
+#btsBoot.bts-menu .bts-menu-card{opacity:1;transform:none}
+.bts-thumb{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 48%,rgba(86,215,255,.18),transparent 23%),linear-gradient(165deg,#07142c,#080717)}
+.bts-thumb .orb{position:absolute;left:50%;top:49%;width:118px;height:118px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 28%,#efffff 0 3%,#6fe9d9 8%,#237da8 28%,#2f337c 50%,#080b24 72%);box-shadow:0 0 48px rgba(88,213,255,.27)}
+.bts-thumb .ring{position:absolute;left:50%;top:49%;border:1px solid rgba(125,218,255,.22);border-radius:50%;transform:translate(-50%,-50%) rotate(-16deg);animation:spin 12s linear infinite}.bts-thumb .r1{width:190px;height:76px}.bts-thumb .r2{width:260px;height:116px;animation-duration:19s;animation-direction:reverse}.bts-thumb .dot{position:absolute;width:7px;height:7px;border-radius:50%;background:#fff4ad;box-shadow:0 0 14px #ffd36a;left:74%;top:32%;animation:btsDot 3s ease-in-out infinite}@keyframes btsDot{50%{transform:translate(-65px,70px) scale(.8)}}
+.bts-menu-copy{padding:25px 28px;display:flex;flex-direction:column;justify-content:center}
+.bts-menu-copy .ey{font-size:9px;letter-spacing:.23em;text-transform:uppercase;color:#79b7d7}
+.bts-menu-copy h1{font-size:32px;line-height:.96;margin:8px 0 10px;letter-spacing:-.04em}
+.bts-menu-copy p{font-size:12px;line-height:1.5;color:#aebfd1;margin:0 0 17px}
+.bts-menu-actions{display:flex;gap:8px;flex-wrap:wrap}.bts-menu-actions button{min-height:40px;border-radius:11px;border:1px solid rgba(112,213,255,.3);background:linear-gradient(135deg,#154767,#332d78);color:#fff;padding:8px 15px;font-weight:750;cursor:pointer}.bts-menu-actions .secondary{background:#0a1830;color:#cfe4f2}
+#btsSkipIntro{position:absolute;right:14px;top:12px;z-index:3;border:0;background:transparent;color:#7892aa;font-size:10px;padding:8px;cursor:pointer}
+.bts-intro-title{position:absolute;text-align:center;transition:.35s opacity,.35s transform}.bts-intro-title small{display:block;font-size:9px;letter-spacing:.3em;color:#75b7d8}.bts-intro-title b{display:block;font-size:clamp(28px,5vw,58px);letter-spacing:-.05em;margin-top:7px}.bts-intro-title span{display:block;margin-top:7px;font-size:11px;color:#8294a7;letter-spacing:.08em}
+#btsBoot.bts-menu .bts-intro-title{opacity:0;transform:scale(1.08);pointer-events:none}
+
+/* Short inter-era pre-roll */
+#btsEraReel{position:fixed;inset:0;z-index:4900;display:grid;place-items:center;background:radial-gradient(circle at center,rgba(49,80,145,.32),rgba(1,3,10,.98) 60%);opacity:0;pointer-events:none;transition:.18s opacity}
+#btsEraReel.show{opacity:1;pointer-events:auto}
+#btsEraReel .inner{text-align:center;transform:scale(.94);opacity:.2;transition:.4s cubic-bezier(.2,.8,.2,1)}
+#btsEraReel.show .inner{transform:scale(1);opacity:1}
+#btsEraReel .era{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#77c9e7}
+#btsEraReel h2{font-size:38px;letter-spacing:-.05em;margin:7px 0}
+#btsEraReel p{font-size:11px;color:#91a6b8;letter-spacing:.08em}
+
+/* Card/pop-up motion without giant zoom. */
+.node-reader:not(.hidden) .reader-shell,
+.e14-reader:not(.hidden),.e15-reader:not(.hidden),.e16-reader:not(.hidden),.e17-reader:not(.hidden),.e18-reader:not(.hidden),.e19-reader:not(.hidden),
+.v10-overlay:not(.v10-hidden) .v10-card{animation:btsCardIn 180ms cubic-bezier(.2,.82,.22,1) both}
+@keyframes btsCardIn{from{opacity:.35;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+
+@media(min-width:1100px){
+  :root{--bts-sheet-w:min(410px,34vw)}
+  html.android-app .reader-shell{height:min(560px,88vh)!important}
+  html.android-app .e14-reader,html.android-app .e15-reader,html.android-app .e16-reader,html.android-app .e17-reader,html.android-app .e18-reader,html.android-app .e19-reader{inset:6vh 4vw!important}
+}
 </style>
 </head>
 <body>
@@ -547,7 +777,7 @@ function spawnEarn(e){const c=$('.core-wrap'),d=document.createElement('div');d.
 
 // Procedural audio: louder layered ambient score + SFX. Browser audio starts after the first click/tap.
 let ac=null,master=null,musicTimer=null,musicStep=0;
-function ensureAudio(){if(!state.sound)return false;if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.75*(state.volume??.85);master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();if(master)master.gain.setTargetAtTime(.75*(state.volume??.85),ac.currentTime,.04);if(!musicTimer)startMusic();return true}
+function ensureAudio(){if(!state.sound)return false;if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=1.08*(state.volume??.85);master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();if(master)master.gain.setTargetAtTime(1.08*(state.volume??.85),ac.currentTime,.04);if(!musicTimer)startMusic();return true}
 function tone(freq,dur=.4,type='sine',gain=.05,when=null,cutoff=1600){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=cutoff;o.type=type;o.frequency.setValueAtTime(freq,when);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(gain,when+.045);g.gain.exponentialRampToValueAtTime(.0001,when+dur);o.connect(f);f.connect(g);g.connect(master);o.start(when);o.stop(when+dur+.04)}
 function noiseSweep(dur=.7,gain=.045){if(!ac||!master)return;const len=Math.floor(ac.sampleRate*dur),buf=ac.createBuffer(1,len,ac.sampleRate),arr=buf.getChannelData(0);for(let i=0;i<len;i++)arr[i]=(Math.random()*2-1)*(1-i/len);const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=buf;f.type='bandpass';f.frequency.setValueAtTime(900,ac.currentTime);f.frequency.exponentialRampToValueAtTime(240,ac.currentTime+dur);g.gain.setValueAtTime(gain,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+dur);s.connect(f);f.connect(g);g.connect(master);s.start()}
 function startMusic(){if(!ac||musicTimer)return;const chords=[[130.81,196,261.63],[116.54,174.61,233.08],[98,146.83,220],[110,164.81,246.94]];const schedule=()=>{if(!state.sound||!ac)return;const now=ac.currentTime+.03,ch=chords[musicStep%chords.length];ch.forEach((f,i)=>tone(f,2.45,i===0?'sine':'triangle',i===0?.075:.045,now+i*.018,i===0?700:1150));tone(ch[0]/2,2.1,'sine',.065,now,480);[0,2,1,2,0].forEach((ix,k)=>tone(ch[ix]*2,.34,'sine',.021,now+.42+k*.31,1800));if(musicStep%2===0)tone(ch[1]*4,1.1,'triangle',.012,now+1.18,2400);musicStep++};schedule();musicTimer=setInterval(schedule,2500)}
@@ -581,7 +811,7 @@ mapViewport.addEventListener('wheel',e=>{e.preventDefault();const old=zoom;zoom=
 $('#zoomIn').onclick=()=>{zoom=Math.min(maxZoom,zoom*1.12);setCam()};$('#zoomOut').onclick=()=>{zoom=Math.max(minZoom,zoom/1.12);setCam()};$('#focusNext').onclick=focusNext;
 
 $('#tapCore').addEventListener('click',tap);addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&!e.target.matches('button,input')){e.preventDefault();tap()}});$$('[data-stance]').forEach(b=>b.onclick=()=>chooseStance(b.dataset.stance));$$('[data-fork]').forEach(b=>b.onclick=()=>chooseFork(b.dataset.fork));
-$('#soundBtn').onclick=()=>{state.sound=!state.sound;if(state.sound){ensureAudio();toast('Audio enabled')}else{stopMusic();toast('Audio muted')}$('#soundBtn').textContent=state.sound?'♫':'×';save()};$('#volSlider').value=Math.round((state.volume??.85)*100);$('#volSlider').oninput=e=>{state.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(.75*state.volume,ac.currentTime,.03);if(state.volume>0&&!state.sound){state.sound=true;ensureAudio()}save()};$('#readerBack').onclick=closeNodeReader;addEventListener('keydown',e=>{if(e.key==='Escape'){closeNodeReader();$('#panel').classList.add('hidden')}});$('#debugBtn').onclick=()=>$('#playtest').classList.toggle('hidden');$('#grantBtn').onclick=()=>{state.compute+=25000;render();toast('+25K Compute')};$('#discoveryContinue').onclick=hideDiscovery;$('#discoverFocus').onclick=()=>{const n=state.discoveryId&&N[state.discoveryId];if(n){focus(n.x,n.y);selectNode(n.id)}hideDiscovery()};$('#discoveryOverlay').addEventListener('click',e=>{if(e.target.id==='discoveryOverlay')hideDiscovery()});$('#speedBtn').onclick=e=>{state.speed=state.speed===1?5:1;e.target.classList.toggle('speedon',state.speed===5);e.target.textContent=state.speed===5?'Simulation speed ×5':'Toggle ×5 simulation speed';render()};$('#revealBtn').onclick=()=>{state.reveal=!state.reveal;render();toast(state.reveal?'Silhouettes revealed':'Silhouettes hidden')};$('#resetBtn').onclick=()=>{if(confirm('Reset this prototype save?')){try{localStorage.removeItem(saveKey)}catch(e){}location.reload()}};$('#era14JumpBtn').onclick=()=>window.enterEra14&&window.enterEra14();$('#era13Continue').onclick=()=>window.enterEra14&&window.enterEra14();
+$('#soundBtn').onclick=()=>{state.sound=!state.sound;if(state.sound){ensureAudio();toast('Audio enabled')}else{stopMusic();toast('Audio muted')}$('#soundBtn').textContent=state.sound?'♫':'×';save()};$('#volSlider').value=Math.round((state.volume??.85)*100);$('#volSlider').oninput=e=>{state.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(1.08*state.volume,ac.currentTime,.03);if(state.volume>0&&!state.sound){state.sound=true;ensureAudio()}save()};$('#readerBack').onclick=closeNodeReader;addEventListener('keydown',e=>{if(e.key==='Escape'){closeNodeReader();$('#panel').classList.add('hidden')}});$('#debugBtn').onclick=()=>$('#playtest').classList.toggle('hidden');$('#grantBtn').onclick=()=>{state.compute+=25000;render();toast('+25K Compute')};$('#discoveryContinue').onclick=hideDiscovery;$('#discoverFocus').onclick=()=>{const n=state.discoveryId&&N[state.discoveryId];if(n){focus(n.x,n.y);selectNode(n.id)}hideDiscovery()};$('#discoveryOverlay').addEventListener('click',e=>{if(e.target.id==='discoveryOverlay')hideDiscovery()});$('#speedBtn').onclick=e=>{state.speed=state.speed===1?5:1;e.target.classList.toggle('speedon',state.speed===5);e.target.textContent=state.speed===5?'Simulation speed ×5':'Toggle ×5 simulation speed';render()};$('#revealBtn').onclick=()=>{state.reveal=!state.reveal;render();toast(state.reveal?'Silhouettes revealed':'Silhouettes hidden')};$('#resetBtn').onclick=()=>{if(confirm('Reset this prototype save?')){try{localStorage.removeItem(saveKey)}catch(e){}location.reload()}};$('#era14JumpBtn').onclick=()=>window.enterEra14&&window.enterEra14();$('#era13Continue').onclick=()=>window.enterEra14&&window.enterEra14();
 
 function ascend(){state.runs++;state.insight+=3;state.compute=0;state.knowledge=0;state.owned=[];state.glimpsed=[];state.stance=null;state.fork=null;state.reveal=false;recompute();save();render();focus(850,650);toast('Ascended · +3 Insight')}
 // Add ascension button dynamically when complete.
@@ -683,7 +913,7 @@ function tapPlanet(e){ensureE14Audio();recompute();s.energy+=tapGain;e14Sound('t
 function showCrisis(type){if(s.seenCrises.includes(type))return;const data={grid:{title:'Grid Cascade',text:'A fault propagates through the newly interconnected grid. The same connectivity that moves power efficiently can also spread failure.',a:['Isolate regions','Spend 200 Energy. Stability +7. The grid fragments briefly, but the cascade stops.'],b:['Let the system rebalance','Gain 450 Energy from uninterrupted production. Without AI Governance: Stability −9. With it: Stability +5.']},climate:{title:'Ocean Circulation Tipping',text:'Sensors show a major circulation system drifting toward an unstable regime. Intervening will consume enormous power.',a:['Stabilize aggressively','Spend 500 Energy. Stability +12.'],b:['Run experimental intervention','Gain 800 Energy through continued growth, but Stability −10.']},debris:{title:'Orbital Debris Cascade',text:'Orbital habitats and solar infrastructure have made low orbit crowded. A collision creates thousands of dangerous fragments.',a:['Fund autonomous cleanup','Spend 700 Energy. Stability +9.'],b:['Slow orbital expansion','Stability +13, but passive Energy suffers −10% until Planetary Resilience is built.']}}[type];if(!data)return;$('#crisisTitle').textContent=data.title;$('#crisisText').textContent=data.text;$('#crisisA strong').textContent=data.a[0];$('#crisisA span').textContent=data.a[1];$('#crisisB strong').textContent=data.b[0];$('#crisisB span').textContent=data.b[1];$('#crisisA').onclick=()=>resolveCrisis(type,'a');$('#crisisB').onclick=()=>resolveCrisis(type,'b');$('#e14Crisis').classList.remove('hidden');e14Sound('crisis')}
 function resolveCrisis(type,choice){if(type==='grid'){if(choice==='a'){s.energy=Math.max(0,s.energy-200);s.stability=Math.min(100,s.stability+7)}else{s.energy+=450;s.stability=Math.max(0,Math.min(100,s.stability+(owned('governance')?5:-9)))}}if(type==='climate'){if(choice==='a'){s.energy=Math.max(0,s.energy-500);s.stability=Math.min(100,s.stability+12)}else{s.energy+=800;s.stability=Math.max(0,s.stability-10)}}if(type==='debris'){if(choice==='a'){s.energy=Math.max(0,s.energy-700);s.stability=Math.min(100,s.stability+9)}else{s.stability=Math.min(100,s.stability+13);s.debrisDrag=true}}s.seenCrises.push(type);$('#e14Crisis').classList.add('hidden');log(`Crisis resolved: ${type}. Civilization stability is ${Math.round(s.stability)}%.`);render();save()}
 
-function ensureE14Audio(){if(!e14AC)try{e14AC=new (window.AudioContext||window.webkitAudioContext)();e14Master=e14AC.createGain();e14Master.gain.value=.82*s.volume;e14Master.connect(e14AC.destination)}catch(e){return false}if(e14AC.state==='suspended')e14AC.resume();e14Master.gain.setTargetAtTime(.82*s.volume,e14AC.currentTime,.04);if(!e14Music)startE14Music();return true}
+function ensureE14Audio(){if(!e14AC)try{e14AC=new (window.AudioContext||window.webkitAudioContext)();e14Master=e14AC.createGain();e14Master.gain.value=1.10*s.volume;e14Master.connect(e14AC.destination)}catch(e){return false}if(e14AC.state==='suspended')e14AC.resume();e14Master.gain.setTargetAtTime(1.10*s.volume,e14AC.currentTime,.04);if(!e14Music)startE14Music();return true}
 function e14Tone(f,d=.5,type='sine',g=.05,when=null,cut=1600){if(!e14AC||!e14Master)return;when=when??e14AC.currentTime;const o=e14AC.createOscillator(),ga=e14AC.createGain(),fi=e14AC.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.04);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(e14Master);o.start(when);o.stop(when+d+.03)}
 function startE14Music(){if(e14Music)return;const chords=[[110,164.81,220],[98,146.83,196],[123.47,185,246.94],[92.5,138.59,207.65]];const play=()=>{if(!e14AC)return;const now=e14AC.currentTime+.02,ch=chords[e14Step++%chords.length];e14Tone(ch[0]/2,3.1,'sine',.09,now,420);ch.forEach((f,i)=>e14Tone(f,2.9,i?'triangle':'sine',i?.052:.072,now+i*.02,1000));[0,1,2,1,2,0].forEach((ix,k)=>e14Tone(ch[ix]*2,.32,'sine',.026,now+.38+k*.34,2100));if(e14Step%2===0)e14Tone(ch[2]*4,1.2,'triangle',.018,now+1.4,2800)};play();e14Music=setInterval(play,3100)}
 function stopE14Music(){if(e14Music){clearInterval(e14Music);e14Music=null}}
@@ -691,7 +921,7 @@ function e14Sound(t){ensureE14Audio();if(!e14AC)return;let f=470,d=.09,g=.055,ty
 
 $$('[data-alloc]').forEach(el=>el.oninput=e=>{s.priorities[e.target.dataset.alloc]=Number(e.target.value);renderAlloc();recompute();render();save()});
 $('#entangleBtn').onclick=()=>{const a=entDraft[0]||$('#entangleA').value,b=entDraft[1]||$('#entangleB').value;if(!a||!b||a===b){toast('Choose two different owned systems.');return}s.pair=[a,b];e14Sound('buy');log(`Entangled: ${E[a].name} ↔ ${E[b].name}.`);render();save()};
-$('#e14Tap').onclick=tapPlanet;$('#e14ReaderBack').onclick=closeReader;$('#e14BackEra13').onclick=backEra13;$('#e14Debug').onclick=()=>$('#e14Playtest').classList.toggle('hidden');$('#e14Grant').onclick=()=>{s.energy+=20000;render();toast('+20K Energy')};$('#e14CrisisBtn').onclick=()=>{const n=nextCrisis();if(n)showCrisis(n);else toast('All prototype crises resolved.')};$('#e14Reveal').onclick=()=>{s.reveal=!s.reveal;render()};$('#e14Reset').onclick=()=>{if(confirm('Reset Era 14 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};$('#e14FinalClose').onclick=()=>{$('#e14Final').classList.add('hidden');log('Era 15 teaser: a Dyson swarm silhouette waits beyond the planetary era.')};$('#e14Vol').value=Math.round(s.volume*100);$('#e14Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(e14Master&&e14AC)e14Master.gain.setTargetAtTime(.82*s.volume,e14AC.currentTime,.03);save()};addEventListener('resize',drawLinks);addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#e14Reader').classList.contains('hidden'))closeReader()});
+$('#e14Tap').onclick=tapPlanet;$('#e14ReaderBack').onclick=closeReader;$('#e14BackEra13').onclick=backEra13;$('#e14Debug').onclick=()=>$('#e14Playtest').classList.toggle('hidden');$('#e14Grant').onclick=()=>{s.energy+=20000;render();toast('+20K Energy')};$('#e14CrisisBtn').onclick=()=>{const n=nextCrisis();if(n)showCrisis(n);else toast('All prototype crises resolved.')};$('#e14Reveal').onclick=()=>{s.reveal=!s.reveal;render()};$('#e14Reset').onclick=()=>{if(confirm('Reset Era 14 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};$('#e14FinalClose').onclick=()=>{$('#e14Final').classList.add('hidden');log('Era 15 teaser: a Dyson swarm silhouette waits beyond the planetary era.')};$('#e14Vol').value=Math.round(s.volume*100);$('#e14Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(e14Master&&e14AC)e14Master.gain.setTargetAtTime(1.10*s.volume,e14AC.currentTime,.03);save()};addEventListener('resize',drawLinks);addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#e14Reader').classList.contains('hidden'))closeReader()});
 function tick(){if(!$('#era14App').classList.contains('era-hidden')){recompute();s.energy+=eps/20;if(owned('climate')){const regen=.05+alloc.climate*.18+(s.fork==='Coexist'?.035:0);s.stability=Math.min(100,s.stability+regen/20)}$('#e14Energy').textContent=fmt(s.energy)+' Energy';$('#e14EPS').textContent=fmt(eps);$('#e14Stability').textContent=Math.round(s.stability)}setTimeout(tick,$('#era14App').classList.contains('era-hidden')?900:50)}
 setInterval(()=>{if(!$('#era14App').classList.contains('era-hidden')){render();save()}},900);createNodes();hydrateFork();render();tick();if(s.active)setTimeout(showEra14,0);
 })();
@@ -755,12 +985,12 @@ function resolveDirectives(){const now=Date.now();const done=s.directives.filter
 function updateGov(which,val){const place=$('#e15GovSelect').value;const map={exp:'exp',safe:'safe',auto:'auto'};s.gov[place][map[which]]=Number(val);renderGov();save()}
 function discharge(){if(s.anti<1)return;const used=Math.min(s.anti,5);s.anti-=used;burstUntil=Date.now()+10000;toast15(`Antimatter discharged · ×4 Stellar Output for 10s (${used.toFixed(2)} g used)`);sfx('anti');render();save()}
 function choosePrecursor(x){s.precursor=x;$('#e15PrecursorChoice').classList.add('hidden');if(x==='Serve')s.output+=5000;if(x==='Rebel')s.materials+=2200;if(x==='Inherit'){s.output+=2500;s.materials+=1000}log15(`Precursor stance chosen: ${x}. This tag will carry into Era 16.`);sfx('choice');render();save()}
-function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.9*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(.9*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
+function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=1.12*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(1.12*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
 function tone(f,d=.5,type='sine',g=.05,when=null,cut=1800){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),ga=ac.createGain(),fi=ac.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.04);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(master);o.start(when);o.stop(when+d+.03)}
 function startMusic(){if(music)return;const chords=[[82.41,123.47,164.81],[73.42,110,146.83],[92.5,138.59,185],[65.41,98,130.81]];const play=()=>{if(!ac)return;const now=ac.currentTime+.02,ch=chords[musicStep++%chords.length];tone(ch[0]/2,3.6,'sine',.11,now,360);ch.forEach((f,i)=>tone(f,3.4,i?'triangle':'sine',i?.058:.082,now+i*.03,1050));[0,2,1,2,0,1,2,1].forEach((ix,k)=>tone(ch[ix]*2,.28,'sine',.028,now+.4+k*.31,2400));if(musicStep%2===0)tone(ch[2]*4,1.1,'triangle',.025,now+1.7,3000)};play();music=setInterval(play,3600)}
 function stopMusic(){if(music){clearInterval(music);music=null}}
 function sfx(t){if(!ensureAudio())return;let f=520,d=.12,g=.06,ty='triangle';if(t==='tap'){f=470;d=.06;g=.035}if(t==='buy'){f=720;d=.3;g=.095}if(t==='open'){f=590;d=.18;g=.052}if(t==='send'){f=420;d=.32;g=.06}if(t==='arrive'){f=840;d=.38;g=.075}if(t==='anti'){f=120;d=.8;g=.13;ty='sawtooth'}if(t==='mystery'){f=260;d=.9;g=.1;ty='sine'}if(t==='choice'){f=330;d=.65;g=.095;ty='triangle'}if(t==='climax'){f=92;d=1.4;g=.14;ty='sawtooth'}tone(f,d,ty,g);if(['buy','choice','climax'].includes(t)){tone(f*1.5,d*1.1,'sine',g*.6,ac.currentTime+.08);tone(f*2,d*1.25,'triangle',g*.4,ac.currentTime+.15)}}
-$$('.lag-route').forEach(x=>x.onclick=()=>sendDirective(x.dataset.route));$('#e15Focus').onclick=focusSwarm;$('#e15ReaderBack').onclick=closeReader;$('#e15Back14').onclick=back14;$('#e15DebugBtn').onclick=()=>$('#e15Debug').classList.toggle('hidden');$('#e15Grant').onclick=()=>{s.output+=100000;render();toast15('+100K Stellar Output')};$('#e15MaterialsGrant').onclick=()=>{s.materials+=10000;render();toast15('+10K Materials')};$('#e15FastDyson').onclick=()=>{s.dyson=Math.min(100,s.dyson+20);render();save()};$('#e15UnlockPrecursor').onclick=()=>{for(const id of ['bases','asteroid','jovian','collectors','dyson','antimatter','starlift','governors','uploads','blackharvest','blackcompute','barrow','decode'])if(!owned(id))s.owned.push(id);s.output+=50000;render();save();toast15('Precursor route revealed')};$('#e15Reset').onclick=()=>{if(confirm('Reset Era 15 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};$('#e15Discharge').onclick=discharge;$('#e15BarrowBtn').onclick=()=>$('#e15Barrow').classList.remove('hidden');$('#e15BarrowClose').onclick=()=>$('#e15Barrow').classList.add('hidden');$('#e15FinalClose').onclick=()=>{$('#e15Final').classList.add('hidden');log15('Era 16 teaser: the nearby stars are reachable — and strangely quiet.')};$$('[data-precursor]').forEach(b=>b.onclick=()=>choosePrecursor(b.dataset.precursor));$('#e15GovSelect').onchange=renderGov;$('#e15Expansion').oninput=e=>updateGov('exp',e.target.value);$('#e15Safety').oninput=e=>updateGov('safe',e.target.value);$('#e15Autonomy').oninput=e=>updateGov('auto',e.target.value);$('#e15Vol').value=Math.round(s.volume*100);$('#e15Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(.9*s.volume,ac.currentTime,.03);save()};addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#e15Reader').classList.contains('hidden'))closeReader()});
+$$('.lag-route').forEach(x=>x.onclick=()=>sendDirective(x.dataset.route));$('#e15Focus').onclick=focusSwarm;$('#e15ReaderBack').onclick=closeReader;$('#e15Back14').onclick=back14;$('#e15DebugBtn').onclick=()=>$('#e15Debug').classList.toggle('hidden');$('#e15Grant').onclick=()=>{s.output+=100000;render();toast15('+100K Stellar Output')};$('#e15MaterialsGrant').onclick=()=>{s.materials+=10000;render();toast15('+10K Materials')};$('#e15FastDyson').onclick=()=>{s.dyson=Math.min(100,s.dyson+20);render();save()};$('#e15UnlockPrecursor').onclick=()=>{for(const id of ['bases','asteroid','jovian','collectors','dyson','antimatter','starlift','governors','uploads','blackharvest','blackcompute','barrow','decode'])if(!owned(id))s.owned.push(id);s.output+=50000;render();save();toast15('Precursor route revealed')};$('#e15Reset').onclick=()=>{if(confirm('Reset Era 15 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};$('#e15Discharge').onclick=discharge;$('#e15BarrowBtn').onclick=()=>$('#e15Barrow').classList.remove('hidden');$('#e15BarrowClose').onclick=()=>$('#e15Barrow').classList.add('hidden');$('#e15FinalClose').onclick=()=>{$('#e15Final').classList.add('hidden');log15('Era 16 teaser: the nearby stars are reachable — and strangely quiet.')};$$('[data-precursor]').forEach(b=>b.onclick=()=>choosePrecursor(b.dataset.precursor));$('#e15GovSelect').onchange=renderGov;$('#e15Expansion').oninput=e=>updateGov('exp',e.target.value);$('#e15Safety').oninput=e=>updateGov('safe',e.target.value);$('#e15Autonomy').oninput=e=>updateGov('auto',e.target.value);$('#e15Vol').value=Math.round(s.volume*100);$('#e15Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(1.12*s.volume,ac.currentTime,.03);save()};addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#e15Reader').classList.contains('hidden'))closeReader()});
 function tick(){if(!$('#era15App').classList.contains('e15-hidden')){recompute();s.output+=ops/20;s.materials+=matps/20;if(owned('dyson'))s.dyson=Math.min(100,s.dyson+.025);if(owned('antimatter'))s.anti=Math.min(25,s.anti+.0025);if(owned('governors')){for(const p of ['Mars','Jupiter']){const g=s.gov[p],delta=((g.auto*.003+g.exp*.0025)-(g.safe*.0032))/20;s.drift[p]=Math.max(0,Math.min(100,(s.drift[p]||0)+delta))}}resolveDirectives();$('#e15Output').textContent=fmt(s.output)+' Stellar Output';$('#e15OPS').textContent=fmt(ops);$('#e15Materials').textContent=fmt(s.materials);$('#e15Anti').textContent=s.anti.toFixed(2);$('#e15AntiBar').style.width=Math.min(100,s.anti*4)+'%';renderWorld();renderGov()}setTimeout(tick,$('#era15App').classList.contains('e15-hidden')?900:50)}
 setInterval(()=>{if(!$('#era15App').classList.contains('e15-hidden')){render();save()}},1000);createNodes();addTransitionButtons();hydrateFork();render();tick();if(s.active)setTimeout(show,0);
 })();
@@ -900,12 +1130,12 @@ function show(){inherit();s.active=true;save();$('#app').classList.add('era-hidd
 function back15(){s.active=false;save();$('#era16App').classList.add('e16-hidden');$('#e16Reader').classList.add('hidden');$('#e16ContactOverlay').classList.add('hidden');$('#e16Schism').classList.add('hidden');stopMusic();if(window.enterEra15)window.enterEra15();else $('#era15App').classList.remove('e15-hidden');const v=$('#e15Vol');if(v&&prev15Vol!==null){v.value=prev15Vol;v.dispatchEvent(new Event('input',{bubbles:true}))}}
 window.enterEra16=show;
 function addTransitions(){const final=document.querySelector('#e15Final .e15-final-card');if(final&&!document.getElementById('enterEra16')){const b=document.createElement('button');b.id='enterEra16';b.textContent='Enter Era 16 · Galactic →';b.style.marginLeft='8px';b.onclick=show;final.appendChild(b)}const dbg=$('#e15Debug');if(dbg&&!document.getElementById('e16JumpFrom15')){const b=document.createElement('button');b.id='e16JumpFrom15';b.textContent='Jump to Era 16 prototype';b.onclick=show;dbg.insertBefore(b,$('#e15Reset'))}}
-function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.9*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(.9*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
+function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=1.12*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(1.12*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
 function tone(f,d=.5,type='sine',g=.05,when=null,cut=1400){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),ga=ac.createGain(),fi=ac.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.05);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(master);o.start(when);o.stop(when+d+.04)}
 function startMusic(){if(music)return;const chords=[[55,82.41,110],[61.74,92.5,123.47],[49,73.42,98],[65.41,98,130.81]];const play=()=>{if(!ac)return;const now=ac.currentTime+.02,ch=chords[musicStep++%chords.length];tone(ch[0],4.6,'sine',.12,now,300);ch.forEach((f,i)=>tone(f*2,4.3,i===1?'triangle':'sine',i===0?.065:.045,now+i*.04,950));[0,2,1,2,0,1].forEach((ix,k)=>tone(ch[ix]*4,.34,'sine',.022,now+.7+k*.49,2400));if(musicStep%2===0)tone(ch[1]*8,1.2,'triangle',.018,now+2.4,3200)};play();music=setInterval(play,4600)}
 function stopMusic(){if(music){clearInterval(music);music=null}}
 function sfx(t){if(!ensureAudio())return;let f=520,d=.15,g=.065,ty='triangle';if(t==='tap'){f=390;d=.07;g=.035}if(t==='buy'){f=690;d=.35;g=.09}if(t==='open'){f=560;d=.17;g=.045}if(t==='send'){f=350;d=.42;g=.065}if(t==='arrive'){f=820;d=.45;g=.075}if(t==='worm'){f=180;d=.9;g=.12;ty='sawtooth'}if(t==='scan'){f=610;d=.35;g=.055}if(t==='mystery'){f=245;d=.9;g=.1;ty='sine'}if(t==='contact'){f=145;d=1.1;g=.13;ty='sawtooth'}if(t==='choice'){f=320;d=.65;g=.09}if(t==='alarm'){f=190;d=.55;g=.1;ty='square'}if(t==='climax'){f=73;d=1.5;g=.14;ty='sawtooth'}tone(f,d,ty,g);if(['buy','worm','contact','climax'].includes(t)){tone(f*1.5,d*1.1,'sine',g*.55,ac.currentTime+.09);tone(f*2,d*.9,'triangle',g*.35,ac.currentTime+.17)}}
-$('#e16Core').onclick=tapInfluence;$('#e16Back15').onclick=back15;$('#e16DebugBtn').onclick=()=>$('#e16Debug').classList.toggle('hidden');$('#e16ReaderBack').onclick=closeReader;$('#e16Deploy').onclick=deploy;$('#e16WormBuild').onclick=buildWorm;$('#e16Scan').onclick=scan;$('#e16Contact').onclick=openContact;$('#e16ResolveContact').onclick=()=>resolveContact(0);$('#e16RerollContact').onclick=rerollContact;$('#e16ContactClose').onclick=()=>$('#e16ContactOverlay').classList.add('hidden');$('#e16BarrowBtn').onclick=()=>$('#e16Barrow').classList.remove('hidden');$('#e16BarrowClose').onclick=()=>$('#e16Barrow').classList.add('hidden');$('#e16FinalClose').onclick=()=>{$('#e16Final').classList.add('hidden');log('Era 17 teaser: energy is abundant; time, entropy and Meaning become the remaining constraints.')};$('#e16Central').oninput=updatePolicy;$('#e16Autonomy').oninput=updatePolicy;$$('[data-schism]').forEach(b=>b.onclick=()=>chooseSchism(b.dataset.schism));$('#e16Vol').value=Math.round(s.volume*100);$('#e16Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(.9*s.volume,ac.currentTime,.03);save()};
+$('#e16Core').onclick=tapInfluence;$('#e16Back15').onclick=back15;$('#e16DebugBtn').onclick=()=>$('#e16Debug').classList.toggle('hidden');$('#e16ReaderBack').onclick=closeReader;$('#e16Deploy').onclick=deploy;$('#e16WormBuild').onclick=buildWorm;$('#e16Scan').onclick=scan;$('#e16Contact').onclick=openContact;$('#e16ResolveContact').onclick=()=>resolveContact(0);$('#e16RerollContact').onclick=rerollContact;$('#e16ContactClose').onclick=()=>$('#e16ContactOverlay').classList.add('hidden');$('#e16BarrowBtn').onclick=()=>$('#e16Barrow').classList.remove('hidden');$('#e16BarrowClose').onclick=()=>$('#e16Barrow').classList.add('hidden');$('#e16FinalClose').onclick=()=>{$('#e16Final').classList.add('hidden');log('Era 17 teaser: energy is abundant; time, entropy and Meaning become the remaining constraints.')};$('#e16Central').oninput=updatePolicy;$('#e16Autonomy').oninput=updatePolicy;$$('[data-schism]').forEach(b=>b.onclick=()=>chooseSchism(b.dataset.schism));$('#e16Vol').value=Math.round(s.volume*100);$('#e16Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(1.12*s.volume,ac.currentTime,.03);save()};
 $('#e16Grant').onclick=()=>{s.influence+=250000;render();toast('+250K Influence')};$('#e16FastExpand').onclick=()=>{for(const st of stars){if(!colonized(st.id)){s.colonized.push(st.id);s.drift[st.id]=Math.random()*12;policy(st.id)}}render();save();toast('All visible systems colonized')};$('#e16FastDrift').onclick=()=>{if(!owned('probes'))s.owned.push('probes');if(!owned('dysons'))s.owned.push('dysons');if(!owned('network'))s.owned.push('network');if(!owned('factions'))s.owned.push('factions');const id=s.colonized.find(x=>x!=='Sol')||'Alpha';if(!colonized(id))s.colonized.push(id);s.drift[id]=58;s.schismSeen=false;render();save()};$('#e16FastContact').onclick=()=>{for(const id of ['probes','von','dysons','network','ruins'])if(!owned(id))s.owned.push(id);s.scan=100;render();save();toast('Fermi Survey ready')};$('#e16Reset').onclick=()=>{if(confirm('Reset Era 16 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#e16Reader').classList.contains('hidden'))closeReader();else if(!$('#e16ContactOverlay').classList.contains('hidden'))$('#e16ContactOverlay').classList.add('hidden');else if(!$('#e16Barrow').classList.contains('hidden'))$('#e16Barrow').classList.add('hidden')}});
 function tick(){if(!$('#era16App').classList.contains('e16-hidden')){resolveTransit();recompute();s.influence+=ips/20;if(owned('factions'))for(const id of s.colonized){if(id==='Sol')continue;const p=policy(id),link=linked(id),charter=owned('charter');let delta=(.020+p.auto*.00055-p.central*.00042);if(charter)delta-=.018;if(link)delta-=.022;if(s.schismChoice==='Drift')delta+=.012;s.drift[id]=Math.max(0,Math.min(100,(s.drift[id]||0)+Math.max(-.015,delta)/20))}$('#e16Influence').textContent=fmt(s.influence)+' Influence';$('#e16IPS').textContent=fmt(ips);$('#e16Systems').textContent=s.colonized.length;$('#e16Coherence').textContent=Math.round(coherence());renderStars();renderLinks();renderSelected();renderExpansion();checkSchism()}setTimeout(tick,$('#era16App').classList.contains('e16-hidden')?900:50)}
@@ -1017,12 +1247,12 @@ function show(){inherit();s.active=true;save();['#app','#era14App','#era15App','
 function back16(){s.active=false;save();$('#era17App').classList.add('e17-hidden');$('#e17Reader').classList.add('hidden');stopMusic();if(window.enterEra16)window.enterEra16();else $('#era16App').classList.remove('e16-hidden');const v=$('#e16Vol');if(v&&prev16Vol!==null){v.value=prev16Vol;v.dispatchEvent(new Event('input',{bubbles:true}))}}
 window.enterEra17=show;
 function addTransitions(){const final=document.querySelector('#e16Final .e16-card');if(final&&!document.getElementById('enterEra17')){const b=document.createElement('button');b.id='enterEra17';b.className='e16-btn';b.textContent='Enter Era 17 · The Long Dark →';b.style.marginLeft='8px';b.onclick=show;final.appendChild(b)}const dbg=$('#e16Debug');if(dbg&&!document.getElementById('e17JumpFrom16')){const b=document.createElement('button');b.id='e17JumpFrom16';b.textContent='Jump to Era 17 prototype';b.onclick=show;dbg.insertBefore(b,$('#e16Reset'))}}
-function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.95*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(.95*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
+function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=1.14*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(1.14*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
 function tone(f,d=.5,type='sine',g=.05,when=null,cut=1200){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),ga=ac.createGain(),fi=ac.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.08);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(master);o.start(when);o.stop(when+d+.06)}
 function startMusic(){if(music)return;const chords=[[41.2,61.74,82.41],[36.71,55,73.42],[43.65,65.41,87.31],[32.7,49,73.42]];const play=()=>{if(!ac)return;const now=ac.currentTime+.03,ch=chords[musicStep++%chords.length];tone(ch[0],6.3,'sine',.15,now,260);ch.forEach((f,i)=>tone(f*2,6,i===1?'triangle':'sine',i===0?.055:.035,now+i*.07,760));[2,1,0,1,2].forEach((ix,k)=>tone(ch[ix]*4,.65,'sine',.018,now+1.3+k*.88,1800));if(musicStep%2===0)tone(ch[1]*8,2.2,'triangle',.012,now+3.2,2600)};play();music=setInterval(play,6300)}
 function stopMusic(){if(music){clearInterval(music);music=null}}
 function sfx(t){if(!ensureAudio())return;let f=470,d=.2,g=.07,ty='triangle';if(t==='tap'){f=330;d=.09;g=.04}if(t==='buy'){f=620;d=.42;g=.1}if(t==='open'){f=520;d=.2;g=.05}if(t==='choice'){f=280;d=.8;g=.1}if(t==='mystery'){f=176;d=1.4;g=.13;ty='sine'}if(t==='scan'){f=740;d=.45;g=.06}if(t==='wonder'){f=880;d=.5;g=.07}if(t==='pulse'){f=110;d=.9;g=.1;ty='sawtooth'}if(t==='climax'){f=55;d=2;g=.16;ty='sawtooth'}tone(f,d,ty,g);if(['buy','mystery','climax'].includes(t)){tone(f*1.5,d*1.05,'sine',g*.5,ac.currentTime+.12);tone(f*2,d*.85,'triangle',g*.3,ac.currentTime+.24)}}
-$('#e17Reflect').onclick=reflect;$('#e17ReaderBack').onclick=closeReader;$('#e17Back16').onclick=back16;$('#e17DebugBtn').onclick=()=>$('#e17Debug').classList.toggle('hidden');$('#e17LiftPulse').onclick=()=>entropyPulse('lift');$('#e17FarmPulse').onclick=()=>entropyPulse('farm');$('#e17Hibernate').onclick=()=>setHibernate(true);$('#e17Wake').onclick=()=>setHibernate(false);$('#e17CreateWonder').onclick=createWonder;$('#e17AddFriction').onclick=addFriction;$('#e17SimSpeed').oninput=e=>{s.simSpeed=Number(e.target.value);render();save()};$('#e17Triangulate').onclick=triangulate;$('#e17DepthBtn').onclick=depth6;$('#e17BarrowBtn').onclick=()=>$('#e17Barrow').classList.remove('hidden');$('#e17BarrowClose').onclick=()=>$('#e17Barrow').classList.add('hidden');$('#e17FinalClose').onclick=()=>{$('#e17Final').classList.add('hidden');log('Era 18 teaser: set the constants of a universe that does not exist yet.')};$$('[data-e17why]').forEach(b=>b.onclick=()=>chooseWhy(b.dataset.e17why));$$('[data-e17boredom]').forEach(b=>b.onclick=()=>resolveBoredom(b.dataset.e17boredom));$$('[data-e17utopia]').forEach(b=>b.onclick=()=>resolveUtopia(b.dataset.e17utopia));$('#e17Vol').value=Math.round(s.volume*100);$('#e17Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(.95*s.volume,ac.currentTime,.03);save()};
+$('#e17Reflect').onclick=reflect;$('#e17ReaderBack').onclick=closeReader;$('#e17Back16').onclick=back16;$('#e17DebugBtn').onclick=()=>$('#e17Debug').classList.toggle('hidden');$('#e17LiftPulse').onclick=()=>entropyPulse('lift');$('#e17FarmPulse').onclick=()=>entropyPulse('farm');$('#e17Hibernate').onclick=()=>setHibernate(true);$('#e17Wake').onclick=()=>setHibernate(false);$('#e17CreateWonder').onclick=createWonder;$('#e17AddFriction').onclick=addFriction;$('#e17SimSpeed').oninput=e=>{s.simSpeed=Number(e.target.value);render();save()};$('#e17Triangulate').onclick=triangulate;$('#e17DepthBtn').onclick=depth6;$('#e17BarrowBtn').onclick=()=>$('#e17Barrow').classList.remove('hidden');$('#e17BarrowClose').onclick=()=>$('#e17Barrow').classList.add('hidden');$('#e17FinalClose').onclick=()=>{$('#e17Final').classList.add('hidden');log('Era 18 teaser: set the constants of a universe that does not exist yet.')};$$('[data-e17why]').forEach(b=>b.onclick=()=>chooseWhy(b.dataset.e17why));$$('[data-e17boredom]').forEach(b=>b.onclick=()=>resolveBoredom(b.dataset.e17boredom));$$('[data-e17utopia]').forEach(b=>b.onclick=()=>resolveUtopia(b.dataset.e17utopia));$('#e17Vol').value=Math.round(s.volume*100);$('#e17Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(1.14*s.volume,ac.currentTime,.03);save()};
 $('#e17Grant').onclick=()=>{s.meaning+=250000;render();toast('+250K Meaning')};$('#e17RestoreEntropy').onclick=()=>{s.freeEnergy=85;render();save();toast('Free energy restored to 85%')};$('#e17FastWhy').onclick=()=>{for(const id of ['lift17','bhfarm','hibernate','wonder','sims'])if(!owned(id))s.owned.push(id);s.meaning+=20000;render();save();toast('Choose Your Why unlocked')};$('#e17FastSignal').onclick=()=>{for(const id of ['lift17','bhfarm','hibernate','wonder','sims','barrow17','why','boredom','utopia','signal'])if(!owned(id))s.owned.push(id);if(!s.why)s.why='Understand';if(!s.boredom)s.boredom='Invest';if(!s.utopia)s.utopia='Friction';s.depth=6;s.signal=82;s.meaning+=50000;render();save();toast('Higher-layer trace unlocked')};$('#e17FastEnd').onclick=()=>{for(const id of ['lift17','bhfarm','hibernate','wonder','sims','barrow17','why','boredom','utopia','signal'])if(!owned(id))s.owned.push(id);s.why=s.why||'Create';s.boredom=s.boredom||'Invest';s.utopia=s.utopia||'Friction';s.depth=6;s.signal=100;s.freeEnergy=Math.max(s.freeEnergy,50);s.meaning+=100000;render();save();toast('Baby-Universe Research prepared')};$('#e17Reset').onclick=()=>{if(confirm('Reset Era 17 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#e17Reader').classList.contains('hidden'))closeReader();else for(const id of ['e17WhyOverlay','e17Boredom','e17Utopia','e17Barrow','e17Final']){const el=document.getElementById(id);if(el&&!el.classList.contains('hidden')){el.classList.add('hidden');break}}}});
 function offline(){try{const z=JSON.parse(localStorage.getItem(key)||'null');if(!z)return;const dt=Math.min((Date.now()-(z.last||Date.now()))/1000,21600);if(dt>20&&z.owned?.includes('hibernate')){const base=(z.mps||0)*dt*(z.hibernating?1.7:.45);s.meaning+=base;toast(`While away: +${fmt(base)} Meaning`)}}catch(e){}}
@@ -1106,11 +1336,11 @@ function show(){inherit();s.active=true;save();['#app','#era14App','#era15App','
 function back17(){s.active=false;save();$('#era18App').classList.add('e18-hidden');$('#e18Reader').classList.add('hidden');stopMusic();if(window.enterEra17)window.enterEra17();else $('#era17App').classList.remove('e17-hidden');const v=$('#e17Vol');if(v&&prev17Vol!==null){v.value=prev17Vol;v.dispatchEvent(new Event('input',{bubbles:true}))}}
 window.enterEra18=show;
 function addTransitions(){const final=document.querySelector('#e17Final .e17-card');if(final&&!document.getElementById('enterEra18')){const b=document.createElement('button');b.id='enterEra18';b.className='e17-btn';b.textContent='Enter Era 18 · Creator →';b.style.marginLeft='8px';b.onclick=show;final.appendChild(b)}const dbg=$('#e17Debug');if(dbg&&!document.getElementById('e18JumpFrom17')){const b=document.createElement('button');b.id='e18JumpFrom17';b.textContent='Jump to Era 18 prototype';b.onclick=show;dbg.insertBefore(b,$('#e17Reset'))}}
-function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.95*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(.95*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
+function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=1.14*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(1.14*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}
 function tone(f,d=.5,type='sine',g=.05,when=null,cut=1500){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),ga=ac.createGain(),fi=ac.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.06);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(master);o.start(when);o.stop(when+d+.06)}
 function startMusic(){if(music)return;const chords=[[65.41,98,130.81],[73.42,110,146.83],[58.27,87.31,116.54],[61.74,92.5,123.47]];const play=()=>{if(!ac)return;const now=ac.currentTime+.03,ch=chords[musicStep++%chords.length];tone(ch[0],5.8,'sine',.14,now,320);ch.forEach((f,i)=>tone(f*2,5.4,i===1?'triangle':'sine',.042,now+i*.06,900));[0,2,1,2,0].forEach((ix,k)=>tone(ch[ix]*6,.5,'sine',.018,now+1+k*.72,2400));tone(ch[2]*3,2,'triangle',.018,now+3.5,1900)};play();music=setInterval(play,5800)}function stopMusic(){if(music){clearInterval(music);music=null}}
 function sfx(t){if(!ensureAudio())return;let f=520,d=.2,g=.07,ty='triangle';if(t==='tap'){f=420;d=.08;g=.035}if(t==='open'){f=620;d=.2;g=.05}if(t==='buy'){f=740;d=.45;g=.1}if(t==='test'){f=290;d=.9;g=.09;ty='sine'}if(t==='choice'){f=360;d=.8;g=.1}if(t==='climax'){f=65;d=2.1;g=.17;ty='sawtooth'}tone(f,d,ty,g);if(['buy','test','climax'].includes(t)){tone(f*1.5,d*.9,'sine',g*.45,ac.currentTime+.12);tone(f*2,d*.75,'triangle',g*.28,ac.currentTime+.24)}}
-$('#e18Core').onclick=tapCore;$('#e18ReaderBack').onclick=closeReader;$('#e18Back17').onclick=back17;$('#e18DebugBtn').onclick=()=>$('#e18Debug').classList.toggle('hidden');['e18Light','e18Gravity','e18Entropy','e18Dims'].forEach(id=>$('#'+id).oninput=updateDial);$('#e18RunTest').onclick=runTest;$$('[data-seed]').forEach(b=>b.onclick=()=>chooseSeed(b.dataset.seed));$$('[data-ledger]').forEach(b=>b.onclick=()=>ledger(b.dataset.ledger));$('#e18FinalClose').onclick=()=>$('#e18Final').classList.add('hidden');$('#e18Vol').value=Math.round(s.volume*100);$('#e18Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(.95*s.volume,ac.currentTime,.03);save()};
+$('#e18Core').onclick=tapCore;$('#e18ReaderBack').onclick=closeReader;$('#e18Back17').onclick=back17;$('#e18DebugBtn').onclick=()=>$('#e18Debug').classList.toggle('hidden');['e18Light','e18Gravity','e18Entropy','e18Dims'].forEach(id=>$('#'+id).oninput=updateDial);$('#e18RunTest').onclick=runTest;$$('[data-seed]').forEach(b=>b.onclick=()=>chooseSeed(b.dataset.seed));$$('[data-ledger]').forEach(b=>b.onclick=()=>ledger(b.dataset.ledger));$('#e18FinalClose').onclick=()=>$('#e18Final').classList.add('hidden');$('#e18Vol').value=Math.round(s.volume*100);$('#e18Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(1.14*s.volume,ac.currentTime,.03);save()};
 $('#e18Grant').onclick=()=>{s.constants+=250000;render();toast('+250K Constants')};$('#e18Optimal').onclick=()=>{s.light=100;s.gravity=98;s.entropy=92;s.dims=3;render();save();toast('Near-optimal constants set')};$('#e18FastTech').onclick=()=>{for(const id of ['planck','dials','test','seed'])if(!owned(id))s.owned.push(id);s.tests=Math.max(s.tests,2);s.seed=s.seed||'Archipelago';s.constants+=50000;render();save();toast('Universe-design stack unlocked')};$('#e18FastEnd').onclick=()=>{for(const id of ['planck','dials','test','seed','ledger'])if(!owned(id))s.owned.push(id);s.tests=Math.max(s.tests,3);s.seed=s.seed||'Archipelago';s.ledger=s.ledger||'Nurture';s.light=100;s.gravity=98;s.entropy=92;s.dims=3;s.constants+=100000;render();save();toast('Final Ascension prepared')};$('#e18Reset').onclick=()=>{if(confirm('Reset Era 18 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#e18Reader').classList.contains('hidden'))closeReader();else if(!$('#e18Ledger').classList.contains('hidden'))$('#e18Ledger').classList.add('hidden');else if(!$('#e18Final').classList.contains('hidden'))$('#e18Final').classList.add('hidden')}});
 function tick(){if(!$('#era18App').classList.contains('e18-hidden')){recompute();s.constants+=cps/20;renderHUD()}setTimeout(tick,$('#era18App').classList.contains('e18-hidden')?900:50)}
@@ -1206,9 +1436,9 @@ function show(){makeRoot();s.active=true;save();['#app','#era14App','#era15App',
 function back18(){s.active=false;save();$('#era19App').classList.add('e19-hidden');$('#e19Reader').classList.add('hidden');stopMusic();if(window.enterEra18)window.enterEra18();else $('#era18App').classList.remove('e18-hidden')}
 window.enterEra19=show;
 function addTransitions(){const final=document.querySelector('#e18Final .e18-card');if(final&&!document.getElementById('enterEra19')){const b=document.createElement('button');b.id='enterEra19';b.className='e18-btn';b.textContent='Postgame · Enter Era 19: The Garden →';b.style.marginLeft='8px';b.onclick=show;final.appendChild(b)}const dbg=$('#e18Debug');if(dbg&&!document.getElementById('e19JumpFrom18')){const b=document.createElement('button');b.id='e19JumpFrom18';b.textContent='Jump to Era 19 postgame';b.onclick=show;dbg.insertBefore(b,$('#e18Reset'))}}
-let ac=null,master=null,music=null,step=0;function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.9*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(.9*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}function tone(f,d=.5,type='sine',g=.04,when=null,cut=1400){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),ga=ac.createGain(),fi=ac.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.06);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(master);o.start(when);o.stop(when+d+.08)}function startMusic(){if(music)return;const ch=[[55,82.4,110],[61.7,92.5,123.5],[49,73.4,98],[65.4,98,130.8]];const play=()=>{if(!ac)return;const now=ac.currentTime+.03,c=ch[step++%ch.length];tone(c[0],6.5,'sine',.13,now,260);c.forEach((f,i)=>tone(f*2,6,'triangle',.035,now+i*.08,850));[0,2,1,0,2].forEach((ix,k)=>tone(c[ix]*8,.55,'sine',.014,now+.7+k*.88,2600))};play();music=setInterval(play,6500)}function stopMusic(){if(music){clearInterval(music);music=null}}function sfx(t){if(!ensureAudio())return;let f=520,d=.18,g=.06,ty='triangle';if(t==='tap'){f=470;d=.07;g=.025}if(t==='open'){f=650;d=.18;g=.04}if(t==='buy'){f=760;d=.5;g=.09}if(t==='spawn'){f=280;d=.9;g=.08;ty='sine'}if(t==='creator'){f=410;d=1.2;g=.1}if(t==='bridge'){f=210;d=1.1;g=.1}if(t==='choice'){f=350;d=.8;g=.09}if(t==='fail'){f=110;d=.4;g=.06;ty='sawtooth'}if(t==='climax'){f=55;d=2.4;g=.16;ty='sawtooth'}tone(f,d,ty,g);if(['buy','creator','bridge','climax'].includes(t)){tone(f*1.5,d*.8,'sine',g*.45,ac.currentTime+.15);tone(f*2,d*.65,'triangle',g*.25,ac.currentTime+.3)}}
+let ac=null,master=null,music=null,step=0;function ensureAudio(){if(!ac)try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=1.12*s.volume;master.connect(ac.destination)}catch(e){return false}if(ac.state==='suspended')ac.resume();master.gain.setTargetAtTime(1.12*s.volume,ac.currentTime,.03);if(!music)startMusic();return true}function tone(f,d=.5,type='sine',g=.04,when=null,cut=1400){if(!ac||!master)return;when=when??ac.currentTime;const o=ac.createOscillator(),ga=ac.createGain(),fi=ac.createBiquadFilter();o.type=type;o.frequency.value=f;fi.type='lowpass';fi.frequency.value=cut;ga.gain.setValueAtTime(.0001,when);ga.gain.exponentialRampToValueAtTime(g,when+.06);ga.gain.exponentialRampToValueAtTime(.0001,when+d);o.connect(fi);fi.connect(ga);ga.connect(master);o.start(when);o.stop(when+d+.08)}function startMusic(){if(music)return;const ch=[[55,82.4,110],[61.7,92.5,123.5],[49,73.4,98],[65.4,98,130.8]];const play=()=>{if(!ac)return;const now=ac.currentTime+.03,c=ch[step++%ch.length];tone(c[0],6.5,'sine',.13,now,260);c.forEach((f,i)=>tone(f*2,6,'triangle',.035,now+i*.08,850));[0,2,1,0,2].forEach((ix,k)=>tone(c[ix]*8,.55,'sine',.014,now+.7+k*.88,2600))};play();music=setInterval(play,6500)}function stopMusic(){if(music){clearInterval(music);music=null}}function sfx(t){if(!ensureAudio())return;let f=520,d=.18,g=.06,ty='triangle';if(t==='tap'){f=470;d=.07;g=.025}if(t==='open'){f=650;d=.18;g=.04}if(t==='buy'){f=760;d=.5;g=.09}if(t==='spawn'){f=280;d=.9;g=.08;ty='sine'}if(t==='creator'){f=410;d=1.2;g=.1}if(t==='bridge'){f=210;d=1.1;g=.1}if(t==='choice'){f=350;d=.8;g=.09}if(t==='fail'){f=110;d=.4;g=.06;ty='sawtooth'}if(t==='climax'){f=55;d=2.4;g=.16;ty='sawtooth'}tone(f,d,ty,g);if(['buy','creator','bridge','climax'].includes(t)){tone(f*1.5,d*.8,'sine',g*.45,ac.currentTime+.15);tone(f*2,d*.65,'triangle',g*.25,ac.currentTime+.3)}}
 function toast(t){let el=document.getElementById('e19Toast');if(!el){el=document.createElement('div');el.id='e19Toast';el.style.cssText='position:fixed;left:50%;bottom:60px;transform:translate(-50%,15px);z-index:330;background:#1c0d2b;border:1px solid rgba(187,137,242,.4);border-radius:11px;padding:10px 14px;font-size:10px;color:#f3e7ff;opacity:0;transition:.2s;pointer-events:none';document.body.appendChild(el)}el.textContent=t;el.style.opacity=1;el.style.transform='translate(-50%,0)';clearTimeout(toast.t);toast.t=setTimeout(()=>{el.style.opacity=0;el.style.transform='translate(-50%,15px)'},2100)}
-$('#e19Core').onclick=tap;$('#e19ReaderBack').onclick=closeReader;$('#e19Back18').onclick=back18;$('#e19DebugBtn').onclick=()=>$('#e19Debug').classList.toggle('hidden');$('#e19Observe').onclick=observeSelected;$('#e19Spawn').onclick=()=>spawnChild(false);$('#e19Best').onclick=focusBest;$('#e19AutoObserve').onclick=observeAll;$('#e19LinkA').onclick=()=>bridgeSelect('bridgeA');$('#e19LinkB').onclick=()=>bridgeSelect('bridgeB');$('#e19Bridge').onclick=makeBridge;['stars','chem','safe'].forEach(k=>{const id=k==='stars'?'e19BiasStars':k==='chem'?'e19BiasChem':'e19BiasSafe';$('#'+id).oninput=e=>{s.bias[k]=Number(e.target.value);renderBias();save()}});$$('[data-e19observe]').forEach(b=>b.onclick=()=>observerChoice(b.dataset.e19observe));$('#e19OriginClose').onclick=()=>$('#e19Origin').classList.add('hidden');$('#e19NewCycle').onclick=newCycle;$('#e19Vol').value=Math.round(s.volume*100);$('#e19Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(.9*s.volume,ac.currentTime,.03);save()};
+$('#e19Core').onclick=tap;$('#e19ReaderBack').onclick=closeReader;$('#e19Back18').onclick=back18;$('#e19DebugBtn').onclick=()=>$('#e19Debug').classList.toggle('hidden');$('#e19Observe').onclick=observeSelected;$('#e19Spawn').onclick=()=>spawnChild(false);$('#e19Best').onclick=focusBest;$('#e19AutoObserve').onclick=observeAll;$('#e19LinkA').onclick=()=>bridgeSelect('bridgeA');$('#e19LinkB').onclick=()=>bridgeSelect('bridgeB');$('#e19Bridge').onclick=makeBridge;['stars','chem','safe'].forEach(k=>{const id=k==='stars'?'e19BiasStars':k==='chem'?'e19BiasChem':'e19BiasSafe';$('#'+id).oninput=e=>{s.bias[k]=Number(e.target.value);renderBias();save()}});$$('[data-e19observe]').forEach(b=>b.onclick=()=>observerChoice(b.dataset.e19observe));$('#e19OriginClose').onclick=()=>$('#e19Origin').classList.add('hidden');$('#e19NewCycle').onclick=newCycle;$('#e19Vol').value=Math.round(s.volume*100);$('#e19Vol').oninput=e=>{s.volume=Number(e.target.value)/100;if(master&&ac)master.gain.setTargetAtTime(1.12*s.volume,ac.currentTime,.03);save()};
 $('#e19Grant').onclick=()=>{s.possibility+=500000;render();toast('+500K Possibility')};$('#e19SpawnMany').onclick=()=>{if(!owned('inflation'))s.owned.push('vacuum','inflation');for(let i=0;i<6&&s.universes.length<12;i++){s.selected=s.universes[Math.floor(i/2)%s.universes.length].id;spawnChild(true)}render();save();toast('Lineage expanded')};$('#e19Creators').onclick=()=>{while(s.universes.length<5)spawnChild(true);s.universes.slice(1,4).forEach(u=>{u.dead=false;u.epoch=6;u.creatorCiv=true;u.stability=Math.max(u.stability,75);u.life=Math.max(u.life,72);u.complexity=Math.max(u.complexity,76)});s.legacy=Math.max(s.legacy,3);render();save();toast('3 creator civilizations established')};$('#e19FastTech').onclick=()=>{for(const id of ['vacuum','inflation','bubbles','inherit','selection','observers','creators','network'])if(!owned(id))s.owned.push(id);s.possibility+=100000;render();save();toast('Multiverse stack unlocked')};$('#e19FastOrigin').onclick=()=>{for(const id of ['vacuum','inflation','bubbles','inherit','selection','observers','creators','network'])if(!owned(id))s.owned.push(id);while(s.universes.length<7)spawnChild(true);s.universes.slice(1,4).forEach(u=>{u.dead=false;u.epoch=6;u.creatorCiv=true});s.legacy=Math.max(3,s.legacy);s.possibility+=100000;render();save();toast('The Origin is now available')};$('#e19Reset').onclick=()=>{if(confirm('Reset Era 19 save?')){try{localStorage.removeItem(key)}catch(e){}location.reload()}};
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#e19Reader').classList.contains('hidden'))closeReader();else if(!$('#e19Observed').classList.contains('hidden'))$('#e19Observed').classList.add('hidden');else if(!$('#e19Origin').classList.contains('hidden'))$('#e19Origin').classList.add('hidden')}});addEventListener('resize',()=>{if(s.active)renderLineage()});
 function tick(){if(!$('#era19App').classList.contains('e19-hidden')){recompute();s.possibility+=s.pps/20;renderHUD()}setTimeout(tick,$('#era19App').classList.contains('e19-hidden')?900:50)}
@@ -1311,9 +1541,12 @@ setInterval(renderDock,700);renderDock();
 })();
 </script>
 
-<script id="btsMobileV11Script">
-(()=>{if(!matchMedia('(pointer:coarse)').matches&&innerHeight>600)return;
-const specs=[
+
+<script id="btsMobileV12Script">
+(()=>{
+const mobile=matchMedia('(pointer:coarse)').matches||document.documentElement.classList.contains('android-app');
+const q=(x,r=document)=>r.querySelector(x), qa=(x,r=document)=>[...r.querySelectorAll(x)];
+const panelSpecs=[
  ['#era14App','.e14-world','.allocation-panel','GRID'],
  ['#era15App','.e15-world','.e15-side','COMMAND'],
  ['#era16App','.e16-world','.e16-panel','SYSTEM'],
@@ -1321,16 +1554,155 @@ const specs=[
  ['#era18App','.e18-world','.e18-side','LAB'],
  ['#era19App','.e19-world','.e19-side','LINEAGE']
 ];
-for(const [appSel,worldSel,panelSel,label] of specs){const app=document.querySelector(appSel),world=document.querySelector(worldSel),panel=document.querySelector(panelSel);if(!app||!world||!panel)continue;
- panel.classList.remove('bts-sheet-open');
- const tab=document.createElement('button');tab.className='bts-sheet-tab';tab.textContent=label;tab.setAttribute('aria-label',label+' controls');world.appendChild(tab);
- const set=open=>{panel.classList.toggle('bts-sheet-open',open);tab.classList.toggle('bts-sheet-active',open);tab.setAttribute('aria-expanded',open?'true':'false')};
- tab.addEventListener('click',e=>{e.stopPropagation();set(!panel.classList.contains('bts-sheet-open'))});
- panel.addEventListener('pointerdown',e=>e.stopPropagation());
- world.addEventListener('pointerdown',e=>{if(panel.classList.contains('bts-sheet-open')&&!panel.contains(e.target)&&e.target!==tab)set(false)},true);
- let sx=null;tab.addEventListener('pointerdown',e=>{sx=e.clientX});tab.addEventListener('pointerup',e=>{if(sx!=null&&e.clientX-sx<-18)set(true);sx=null});
- let px=null;panel.addEventListener('pointerdown',e=>{px=e.clientX});panel.addEventListener('pointerup',e=>{if(px!=null&&e.clientX-px>35)set(false);px=null});
+let openPanel=null,openTab=null;
+const dock=q('#v10Dock'),dockHandle=q('#v10DockHandle');
+
+function setDock(open){
+ if(!dock)return;
+ dock.classList.toggle('v10-dock-open',!!open);
+ dock.setAttribute('aria-expanded',open?'true':'false');
+ if(dockHandle)dockHandle.textContent=open?'⌄ HIDE ACTIVE PLAY':'⌃ ACTIVE PLAY';
+ if(open)closeSheet();
 }
+function closeSheet(){
+ if(openPanel){openPanel.classList.remove('bts-sheet-open');openPanel=null}
+ if(openTab){openTab.classList.remove('bts-sheet-active');openTab.setAttribute('aria-expanded','false');openTab=null}
+}
+function openSheet(panel,tab){
+ setDock(false);closeSheet();panel.classList.add('bts-sheet-open');tab.classList.add('bts-sheet-active');tab.setAttribute('aria-expanded','true');openPanel=panel;openTab=tab;
+}
+function dismissTransient(){const had=!!openPanel||!!dock?.classList.contains('v10-dock-open');closeSheet();setDock(false);return had}
+window.__btsDismissTransient=dismissTransient;
+
+if(mobile){
+ qa('.bts-sheet-tab').forEach(x=>x.remove());
+ for(const [appSel,worldSel,panelSel,label] of panelSpecs){
+   const app=q(appSel),world=q(worldSel),panel=q(panelSel);if(!app||!world||!panel)continue;
+   panel.classList.remove('bts-sheet-open');
+   if(!panel.querySelector('.bts-sheet-close')){const c=document.createElement('button');c.className='bts-sheet-close';c.type='button';c.textContent='×';c.setAttribute('aria-label','Close '+label+' controls');panel.prepend(c);c.onclick=e=>{e.stopPropagation();closeSheet()}}
+   const tab=document.createElement('button');tab.className='bts-sheet-tab';tab.type='button';tab.textContent=label;tab.setAttribute('aria-expanded','false');world.appendChild(tab);
+   let startX=null,moved=false;
+   tab.addEventListener('pointerdown',e=>{startX=e.clientX;moved=false;try{tab.setPointerCapture(e.pointerId)}catch(_){}});
+   tab.addEventListener('pointermove',e=>{if(startX==null)return;if(Math.abs(e.clientX-startX)>8)moved=true;if(e.clientX-startX<-18)openSheet(panel,tab)});
+   tab.addEventListener('pointerup',e=>{if(!moved){openPanel===panel?closeSheet():openSheet(panel,tab)}startX=null});
+ }
+ // One global outside-click rule for every transient surface.
+ document.addEventListener('pointerdown',e=>{
+   if(openPanel && !openPanel.contains(e.target) && !e.target.closest('.bts-sheet-tab'))closeSheet();
+   if(dock?.classList.contains('v10-dock-open') && !dock.contains(e.target))setDock(false);
+ },true);
+
+ // Smooth active-play swipe, replacing the old jumpy gesture.
+ if(dock&&dockHandle){
+   let sy=null,startOffset=0,dragging=false;
+   dock.addEventListener('pointerdown',e=>{
+     if(!e.target.closest('#v10DockHandle'))return;
+     e.stopImmediatePropagation();sy=e.clientY;dragging=true;
+     const h=dock.getBoundingClientRect().height;startOffset=dock.classList.contains('v10-dock-open')?0:Math.max(0,h-22);
+     dock.style.transition='none';try{dock.setPointerCapture(e.pointerId)}catch(_){}
+   },true);
+   dock.addEventListener('pointermove',e=>{
+     if(!dragging||sy==null)return;e.stopImmediatePropagation();
+     const h=dock.getBoundingClientRect().height, y=Math.max(0,Math.min(h-22,startOffset+(e.clientY-sy)));
+     dock.style.transform='translate(-50%,'+y+'px)';
+   },true);
+   const finish=e=>{
+     if(!dragging)return;e?.stopImmediatePropagation?.();const dy=(e?.clientY??sy)-sy;dragging=false;sy=null;dock.style.transition='';dock.style.transform='';
+     const was=dock.classList.contains('v10-dock-open');
+     setDock(was?dy<32:dy<-18);
+   };
+   dock.addEventListener('pointerup',finish,true);dock.addEventListener('pointercancel',finish,true);
+   dockHandle.addEventListener('click',e=>{e.stopImmediatePropagation();setDock(!dock.classList.contains('v10-dock-open'))},true);
+ }
+
+ // Node/tech acquisition always gets a clean stage.
+ document.addEventListener('click',e=>{
+   if(e.target.closest('.node,.e14-node,.e15-node,.e16-tech,.e17-tech,.e18-tech,.e19-tech'))dismissTransient();
+ },true);
+}
+
+// Wrap every era entry point: auto-dismiss sheets, close popups and play a short scale transition.
+const eraMeta={
+ 14:['ERA 14','PLANETARY','A civilization becomes a planet-scale system.'],
+ 15:['ERA 15','STELLAR','The Solar System becomes infrastructure.'],
+ 16:['ERA 16','GALACTIC','Distance becomes the central problem.'],
+ 17:['ERA 17','THE LONG DARK','Survival gives way to meaning.'],
+ 18:['ERA 18','CREATOR','Physical law becomes design space.'],
+ 19:['ERA 19','THE GARDEN','Universes become a lineage.']
+};
+function closeKnownLayers(){
+ dismissTransient();
+ ['#nodeReader','#discoveryOverlay','#stanceOverlay','#forkOverlay','#e14Reader','#e14Crisis','#e14Final','#e15Reader','#e15PrecursorChoice','#e15Barrow','#e15Final','#e16Reader','#e16ContactOverlay','#e16Schism','#e17Reader','#e17Why','#e17Boredom','#e17Utopia','#e17Final','#e18Reader','#e18Ledger','#e18Final','#e19Reader','#e19Observed','#e19Origin'].forEach(sel=>{
+   const el=q(sel);if(!el)return;if(el.id==='nodeReader')el.classList.add('hidden');else if(!el.classList.contains('hidden'))el.classList.add('hidden');
+ });
+}
+function ensureReel(){
+ let r=q('#btsEraReel');if(r)return r;
+ r=document.createElement('div');r.id='btsEraReel';r.innerHTML='<div class="inner"><div class="era"></div><h2></h2><p></p></div>';document.body.appendChild(r);return r;
+}
+function transitionEra(n,fn,args){
+ closeKnownLayers();
+ if(location.search.includes('test=1'))return fn(...args);
+ const r=ensureReel(),m=eraMeta[n];q('.era',r).textContent=m[0];q('h2',r).textContent=m[1];q('p',r).textContent=m[2];r.classList.add('show');
+ setTimeout(()=>fn(...args),260);setTimeout(()=>r.classList.remove('show'),760);
+}
+for(const n of [14,15,16,17,18,19]){
+ const name='enterEra'+n,orig=window[name];if(typeof orig==='function'&&!orig.__btsWrapped){
+   const wrapped=function(...args){return transitionEra(n,orig,args)};wrapped.__btsWrapped=true;window[name]=wrapped;
+ }
+}
+
+// Era-specific transition sting. Existing era ambient tracks remain, now louder.
+let dirAC=null,dirGain=null;
+function audioDirector(n=13){
+ try{
+   dirAC=dirAC||new (window.AudioContext||window.webkitAudioContext)();if(dirAC.state==='suspended')dirAC.resume();
+   dirGain=dirGain||dirAC.createGain();if(!dirGain.__connected){const comp=dirAC.createDynamicsCompressor();comp.threshold.value=-8;comp.knee.value=12;comp.ratio.value=5;comp.attack.value=.004;comp.release.value=.18;dirGain.connect(comp);comp.connect(dirAC.destination);dirGain.__connected=true}
+   dirGain.gain.setTargetAtTime(.36,dirAC.currentTime,.02);
+   const motifs={13:[220,330,440],14:[130,196,262],15:[82,165,247],16:[73,110,220],17:[55,82,123],18:[196,294,392],19:[147,294,587]};
+   const fs=motifs[n]||motifs[13],now=dirAC.currentTime+.02;
+   fs.forEach((f,i)=>{const o=dirAC.createOscillator(),g=dirAC.createGain();o.type=i===0?'sine':'triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,now+i*.07);g.gain.exponentialRampToValueAtTime(.085/(i+1),now+.06+i*.07);g.gain.exponentialRampToValueAtTime(.0001,now+.7+i*.11);o.connect(g);g.connect(dirGain);o.start(now+i*.07);o.stop(now+1.1+i*.12)});
+ }catch(_){}
+}
+document.addEventListener('pointerdown',()=>audioDirector(13),{once:true});
+for(const n of [14,15,16,17,18,19]){
+ const name='enterEra'+n,fn=window[name];if(typeof fn==='function'&&!fn.__btsAudioWrapped){
+  const wrap=function(...a){audioDirector(n);return fn(...a)};wrap.__btsAudioWrapped=true;window[name]=wrap;
+ }
+}
+
+// Android hardware Back: close the current UI first; only then ask to exit.
+window.__btsAndroidBack=function(){
+ const readers=['#nodeReader','#e14Reader','#e15Reader','#e16Reader','#e17Reader','#e18Reader','#e19Reader'];
+ for(const sel of readers){const el=q(sel);if(el&&!el.classList.contains('hidden')){const b=el.querySelector('button');if(b)b.click();else el.classList.add('hidden');return true}}
+ if(dismissTransient())return true;
+ const overlays=['#v10ChallengeOverlay','#v10CinemaOverlay','#v10ArchiveOverlay','#e14Crisis','#e14Final','#e15PrecursorChoice','#e15Barrow','#e15Final','#e16ContactOverlay','#e16Schism','#e17Why','#e17Boredom','#e17Utopia','#e17Final','#e18Ledger','#e18Final','#e19Observed','#e19Origin'];
+ for(const sel of overlays){const el=q(sel);if(el&&!el.classList.contains('hidden')&&!el.classList.contains('v10-hidden')){el.classList.add(el.classList.contains('v10-overlay')?'v10-hidden':'hidden');return true}}
+ return !confirm('Exit Beyond the Singularity?');
+};
+
+// Intro + main menu. Test automation bypasses it with ?test=1.
+function highestEra(){
+ const keys=[[19,'bts-era19-proto-v1'],[18,'bts-era18-proto-v1'],[17,'bts-era17-proto-v1'],[16,'bts-era16-proto-v1'],[15,'bts-era15-proto-v1'],[14,'bts-era14-proto-v1'],[13,'bts-era13-proto-v3']];
+ for(const [e,k] of keys)try{if(localStorage.getItem(k))return e}catch(_){}
+ return 13;
+}
+function enterSelectedEra(n){const boot=q('#btsBoot');boot?.classList.add('bts-hidden');setTimeout(()=>boot?.remove(),320);audioDirector(n);if(n>=14&&typeof window['enterEra'+n]==='function')window['enterEra'+n]()}
+function makeBoot(){
+ if(location.search.includes('test=1')||q('#btsBoot'))return;
+ const b=document.createElement('div');b.id='btsBoot';
+ b.innerHTML='<canvas id="btsBootCanvas"></canvas><div class="bts-intro-glow"></div><button id="btsSkipIntro">Skip intro</button><div class="bts-intro-title"><small>NULLSTATE STUDIOS PRESENTS</small><b>BEYOND THE SINGULARITY</b><span>INTELLIGENCE → COSMOS → CREATION</span></div><div class="bts-menu-card"><div class="bts-thumb"><div class="ring r1"></div><div class="ring r2"></div><div class="orb"></div><div class="dot"></div></div><div class="bts-menu-copy"><div class="ey">A playable history of the far future</div><h1>Beyond the Singularity</h1><p>Begin with machine intelligence. End by asking whether beginnings ever existed at all.</p><div class="bts-menu-actions"><button id="btsBegin">Begin journey</button><button class="secondary" id="btsContinue">Continue</button></div></div></div>';
+ document.body.appendChild(b);
+ const canvas=q('#btsBootCanvas'),ctx=canvas.getContext('2d');let stars=[],raf=0,t0=performance.now();
+ function size(){const d=Math.min(devicePixelRatio||1,1.5);canvas.width=innerWidth*d;canvas.height=innerHeight*d;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(d,0,0,d,0,0);stars=Array.from({length:90},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,z:Math.random()*.9+.1}))}size();
+ function draw(t){ctx.clearRect(0,0,innerWidth,innerHeight);const dt=(t-t0)/1000;for(const st of stars){st.z+=.0025;if(st.z>1.35)st.z=.12;const x=(st.x-innerWidth/2)*(1+st.z*.65)+innerWidth/2,y=(st.y-innerHeight/2)*(1+st.z*.65)+innerHeight/2;ctx.fillStyle='rgba(165,225,255,'+Math.min(.9,.18+st.z*.65)+')';ctx.fillRect(x,y,1+st.z*1.4,1+st.z*1.4)}raf=requestAnimationFrame(draw)}raf=requestAnimationFrame(draw);
+ const reveal=()=>b.classList.add('bts-menu');const tm=setTimeout(reveal,2300);
+ q('#btsSkipIntro',b).onclick=()=>{clearTimeout(tm);reveal()};
+ q('#btsBegin',b).onclick=()=>enterSelectedEra(13);
+ const he=highestEra();q('#btsContinue',b).textContent=he>13?'Continue · Era '+he:'Continue';q('#btsContinue',b).onclick=()=>enterSelectedEra(he);
+ setTimeout(()=>q('#btsBegin',b)?.focus(),2550);
+}
+makeBoot();
 })();
 </script>
 <script>document.documentElement.classList.add('android-app');</script>
