@@ -3,7 +3,7 @@ set -euo pipefail
 
 PKG="com.nullstatestudios.beyondsingularity"
 ACT="$PKG/.MainActivity"
-OUT="\${1:-layout-screenshots}"
+OUT="${1:-layout-screenshots}"
 mkdir -p "$OUT"
 
 wait_for_app() {
@@ -18,7 +18,7 @@ wait_for_app() {
 }
 
 capture() {
-  local profile="$1" era="$2" sheet="\${3:-closed}"
+  local profile="$1" era="$2" sheet="${3:-closed}"
   adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
   if [[ "$sheet" == "open" ]]; then
     adb shell am start -W -n "$ACT" --ei bts_test_era "$era" --ez bts_test_sheet true >/dev/null
@@ -26,20 +26,20 @@ capture() {
     adb shell am start -W -n "$ACT" --ei bts_test_era "$era" --ez bts_test_sheet false >/dev/null
   fi
   wait_for_app
-  adb exec-out screencap -p > "$OUT/\${profile}_era\${era}_\${sheet}.png"
-  adb shell dumpsys window displays > "$OUT/\${profile}_era\${era}_\${sheet}_window.txt" || true
+  adb exec-out screencap -p > "$OUT/${profile}_era${era}_${sheet}.png"
+  adb shell dumpsys window displays > "$OUT/${profile}_era${era}_${sheet}_window.txt" || true
 }
 
 apply_profile() {
   local name="$1" size="$2" density="$3"
-  echo "=== $name: $size @ \${density}dpi ==="
+  echo "=== $name: $size @ ${density}dpi ==="
   adb shell wm size "$size"
   adb shell wm density "$density"
   adb shell settings put system font_scale 1.0 || true
   sleep 1
-  adb shell wm size > "$OUT/\${name}_device.txt"
-  adb shell wm density >> "$OUT/\${name}_device.txt"
-  adb shell dumpsys display | grep -E "mBaseDisplayInfo|DisplayDeviceInfo|DisplayInfo" | head -n 15 >> "$OUT/\${name}_device.txt" || true
+  adb shell wm size > "$OUT/${name}_device.txt"
+  adb shell wm density >> "$OUT/${name}_device.txt"
+  adb shell dumpsys display | grep -E "mBaseDisplayInfo|DisplayDeviceInfo|DisplayInfo" | head -n 15 >> "$OUT/${name}_device.txt" || true
 
   for era in 13 14 15 16 17 18 19; do
     capture "$name" "$era" closed
