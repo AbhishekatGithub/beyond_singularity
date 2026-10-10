@@ -1642,7 +1642,7 @@ function ensureReel(){
 }
 function transitionEra(n,fn,args){
  closeKnownLayers();
- if(location.search.includes('test=1'))return fn(...args);
+ if(location.search.includes('test=1')||window.__BTS_TEST_MODE)return fn(...args);
  const r=ensureReel(),m=eraMeta[n];q('.era',r).textContent=m[0];q('h2',r).textContent=m[1];q('p',r).textContent=m[2];r.classList.add('show');
  setTimeout(()=>fn(...args),260);setTimeout(()=>r.classList.remove('show'),760);
 }
