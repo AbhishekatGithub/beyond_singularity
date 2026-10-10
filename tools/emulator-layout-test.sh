@@ -9,7 +9,7 @@ mkdir -p "$OUT"
 wait_for_app() {
   for _ in {1..30}; do
     if adb shell dumpsys window windows 2>/dev/null | grep -q "$PKG"; then
-      sleep 1
+      sleep 2
       return 0
     fi
     sleep 0.3
@@ -48,6 +48,10 @@ apply_profile() {
     capture "$name" "$era" open
   done
 }
+
+# Suppress Android's one-time immersive-mode education overlay so screenshots show the game.
+adb shell settings put secure immersive_mode_confirmations confirmed || true
+adb shell settings put global policy_control immersive.full=* || true
 
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 
