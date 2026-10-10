@@ -21,7 +21,12 @@ async function loadEra(context, era) {
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   await page.setContent(html, { waitUntil: 'load' });
-  await page.evaluate(() => document.documentElement.classList.add('android-app'));
+  await page.evaluate(() => {
+    window.__BTS_TEST_MODE = true;
+    document.querySelector('#btsBoot')?.remove();
+    document.querySelector('#btsEraReel')?.remove();
+    document.documentElement.classList.add('android-app');
+  });
   if (era >= 14) {
     await page.evaluate(e => {
       const fn = window['enterEra' + e];
