@@ -1665,6 +1665,13 @@ function audioDirector(n=13){
  }catch(_){}
 }
 document.addEventListener('pointerdown',()=>audioDirector(13),{once:true});
+// Internal era buttons retain references to their local show() functions, so intercept them too.
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[id^="enterEra"],[id*="JumpFrom"]');if(!b)return;
+  closeKnownLayers();
+  const m=(b.id||b.textContent||'').match(/Era\s*(1[4-9])|enterEra(1[4-9])/i);
+  const n=Number(m?.[1]||m?.[2]||0);if(n)audioDirector(n);
+},true);
 for(const n of [14,15,16,17,18,19]){
  const name='enterEra'+n,fn=window[name];if(typeof fn==='function'&&!fn.__btsAudioWrapped){
   const wrap=function(...a){audioDirector(n);return fn(...a)};wrap.__btsAudioWrapped=true;window[name]=wrap;
@@ -1689,7 +1696,7 @@ function highestEra(){
 }
 function enterSelectedEra(n){const boot=q('#btsBoot');boot?.classList.add('bts-hidden');setTimeout(()=>boot?.remove(),320);audioDirector(n);if(n>=14&&typeof window['enterEra'+n]==='function')window['enterEra'+n]()}
 function makeBoot(){
- if(location.search.includes('test=1')||q('#btsBoot'))return;
+ if(location.search.includes('test=1')||window.__BTS_TEST_MODE||q('#btsBoot'))return;
  const b=document.createElement('div');b.id='btsBoot';
  b.innerHTML='<canvas id="btsBootCanvas"></canvas><div class="bts-intro-glow"></div><button id="btsSkipIntro">Skip intro</button><div class="bts-intro-title"><small>NULLSTATE STUDIOS PRESENTS</small><b>BEYOND THE SINGULARITY</b><span>INTELLIGENCE → COSMOS → CREATION</span></div><div class="bts-menu-card"><div class="bts-thumb"><div class="ring r1"></div><div class="ring r2"></div><div class="orb"></div><div class="dot"></div></div><div class="bts-menu-copy"><div class="ey">A playable history of the far future</div><h1>Beyond the Singularity</h1><p>Begin with machine intelligence. End by asking whether beginnings ever existed at all.</p><div class="bts-menu-actions"><button id="btsBegin">Begin journey</button><button class="secondary" id="btsContinue">Continue</button></div></div></div>';
  document.body.appendChild(b);
