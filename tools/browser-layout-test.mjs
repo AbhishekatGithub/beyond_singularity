@@ -17,6 +17,7 @@ const browser = await chromium.launch({ headless: true });
 
 async function loadEra(context, era) {
   const page = await context.newPage();
+  await page.addInitScript(() => { window.__BTS_TEST_MODE = true; });
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   await page.setContent(html, { waitUntil: 'load' });
