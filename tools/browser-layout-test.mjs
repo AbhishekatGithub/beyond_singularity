@@ -74,5 +74,58 @@ for (const p of profiles) {
   await context.close();
 }
 
+
+const s24 = profiles.find(p => p.name === 'galaxy_s24');
+{
+  const context = await browser.newContext({
+    viewport: { width: s24.width, height: s24.height },
+    deviceScaleFactor: s24.dpr, isMobile: true, hasTouch: true, locale: 'en-US', colorScheme: 'dark'
+  });
+
+  // Era 13 compact node reader.
+  {
+    const { page } = await loadEra(context, 13);
+    await page.locator('.node.available').first().click({ force: true });
+    await page.waitForTimeout(220);
+    await page.screenshot({ path: path.join(out, 'galaxy_s24_era13_reader.png'), fullPage: false });
+    await page.close();
+  }
+
+  // Era 14 reader + side sheet interaction.
+  {
+    const { page } = await loadEra(context, 14);
+    await page.locator('.e14-node.available').first().click({ force: true });
+    await page.waitForTimeout(220);
+    await page.screenshot({ path: path.join(out, 'galaxy_s24_era14_reader.png'), fullPage: false });
+    await page.close();
+  }
+
+  // Era 17 side sheet must close without leaving a dead 40% column.
+  {
+    const { page } = await loadEra(context, 17);
+    const tab = page.locator('#era17App .bts-sheet-tab');
+    await tab.click({ force: true });
+    await page.waitForTimeout(200);
+    await page.screenshot({ path: path.join(out, 'galaxy_s24_era17_sheet_open_target.png'), fullPage: false });
+    await page.mouse.click(250, 150);
+    await page.waitForTimeout(220);
+    await page.screenshot({ path: path.join(out, 'galaxy_s24_era17_sheet_dismissed_target.png'), fullPage: false });
+    await page.close();
+  }
+
+  // Active Play open/closed proportions.
+  {
+    const { page } = await loadEra(context, 15);
+    await page.locator('#v10DockHandle').click({ force: true });
+    await page.waitForTimeout(220);
+    await page.screenshot({ path: path.join(out, 'galaxy_s24_active_play_open.png'), fullPage: false });
+    await page.mouse.click(140, 120);
+    await page.waitForTimeout(220);
+    await page.screenshot({ path: path.join(out, 'galaxy_s24_active_play_dismissed.png'), fullPage: false });
+    await page.close();
+  }
+  await context.close();
+}
+
 await browser.close();
 console.log('Browser/WebView-style layout screenshots complete.');
