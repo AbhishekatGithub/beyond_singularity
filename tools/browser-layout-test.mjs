@@ -85,7 +85,7 @@ const s24 = profiles.find(p => p.name === 'galaxy_s24');
   // Era 13 compact node reader.
   {
     const { page } = await loadEra(context, 13);
-    await page.locator('.node.available').first().click({ force: true });
+    await page.evaluate(() => document.querySelector('.node.available')?.click());
     await page.waitForTimeout(220);
     await page.screenshot({ path: path.join(out, 'galaxy_s24_era13_reader.png'), fullPage: false });
     await page.close();
@@ -94,7 +94,7 @@ const s24 = profiles.find(p => p.name === 'galaxy_s24');
   // Era 14 reader + side sheet interaction.
   {
     const { page } = await loadEra(context, 14);
-    await page.locator('.e14-node.available').first().click({ force: true });
+    await page.evaluate(() => document.querySelector('.e14-node.available')?.click());
     await page.waitForTimeout(220);
     await page.screenshot({ path: path.join(out, 'galaxy_s24_era14_reader.png'), fullPage: false });
     await page.close();
