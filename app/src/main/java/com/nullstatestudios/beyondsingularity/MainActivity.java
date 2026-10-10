@@ -86,7 +86,8 @@ public class MainActivity extends Activity {
         webView.setFocusableInTouchMode(true);
 
         if (savedInstanceState == null) {
-            webView.loadUrl("file:///android_asset/index.html");
+            int testEra = getIntent().getIntExtra("bts_test_era", 0);
+            webView.loadUrl(testEra >= 13 ? "file:///android_asset/index.html?test=1" : "file:///android_asset/index.html");
         } else {
             webView.restoreState(savedInstanceState);
         }
