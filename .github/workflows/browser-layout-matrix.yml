@@ -1,0 +1,39 @@
+name: Browser Layout Matrix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "app/src/main/assets/index.html"
+      - "tools/browser-layout-test.mjs"
+      - ".github/workflows/browser-layout-matrix.yml"
+
+jobs:
+  layout-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Capture cross-device layouts
+        run: node tools/browser-layout-test.mjs browser-layout-screenshots
+
+      - name: Upload browser layout screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-layout-screenshots
+          path: browser-layout-screenshots
+          if-no-files-found: error
+          retention-days: 14
