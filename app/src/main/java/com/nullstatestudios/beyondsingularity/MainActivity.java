@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.content.pm.ApplicationInfo;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -36,6 +37,10 @@ public class MainActivity extends Activity {
         }
         setContentView(webView);
 
+        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -55,7 +60,27 @@ public class MainActivity extends Activity {
             settings.setSafeBrowsingEnabled(true);
         }
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                int testEra = getIntent().getIntExtra("bts_test_era", 13);
+                boolean openSheet = getIntent().getBooleanExtra("bts_test_sheet", false);
+                if (testEra >= 14 && testEra <= 19) {
+                    view.evaluateJavascript(
+                        "(function(){var f=window['enterEra" + testEra + "'];if(typeof f==='function'){f();return true;}return false;})()",
+                        ignored -> {
+                            if (openSheet) {
+                                view.postDelayed(() -> view.evaluateJavascript(
+                                    "(function(){var b=document.querySelector('#era" + testEra + "App .bts-sheet-tab');if(b){b.click();return true;}return false;})()",
+                                    null
+                                ), 650);
+                            }
+                        }
+                    );
+                }
+            }
+        });
         webView.setWebChromeClient(new WebChromeClient());
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
