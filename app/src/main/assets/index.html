@@ -415,6 +415,9 @@ html.android-app .v10-slider-row{padding:6px!important}
 .v10-overlay:not(.v10-hidden) .v10-card{animation:btsCardIn 180ms cubic-bezier(.2,.82,.22,1) both}
 @keyframes btsCardIn{from{opacity:.35;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
 
+body.bts-modal-open #v10Dock,body.bts-sheet-active #v10Dock{opacity:0!important;pointer-events:none!important;transform:translate(-50%,100%)!important}
+body.bts-modal-open .bts-sheet-tab,body.bts-dock-active .bts-sheet-tab{opacity:0!important;pointer-events:none!important}
+#v10Dock,.bts-sheet-tab{transition-property:transform,opacity,visibility!important}
 @media(min-width:1100px){
   :root{--bts-sheet-w:min(410px,34vw)}
   html.android-app .reader-shell{height:min(560px,88vh)!important}
@@ -1559,17 +1562,19 @@ const dock=q('#v10Dock'),dockHandle=q('#v10DockHandle');
 
 function setDock(open){
  if(!dock)return;
+ document.body.classList.toggle('bts-dock-active',!!open);
  dock.classList.toggle('v10-dock-open',!!open);
  dock.setAttribute('aria-expanded',open?'true':'false');
  if(dockHandle)dockHandle.textContent=open?'⌄ HIDE ACTIVE PLAY':'⌃ ACTIVE PLAY';
  if(open)closeSheet();
 }
 function closeSheet(){
+ document.body.classList.remove('bts-sheet-active');
  if(openPanel){openPanel.classList.remove('bts-sheet-open');openPanel=null}
  if(openTab){openTab.classList.remove('bts-sheet-active');openTab.setAttribute('aria-expanded','false');openTab=null}
 }
 function openSheet(panel,tab){
- setDock(false);closeSheet();panel.classList.add('bts-sheet-open');tab.classList.add('bts-sheet-active');tab.setAttribute('aria-expanded','true');openPanel=panel;openTab=tab;
+ setDock(false);closeSheet();document.body.classList.add('bts-sheet-active');panel.classList.add('bts-sheet-open');tab.classList.add('bts-sheet-active');tab.setAttribute('aria-expanded','true');openPanel=panel;openTab=tab;
 }
 function dismissTransient(){const had=!!openPanel||!!dock?.classList.contains('v10-dock-open');closeSheet();setDock(false);return had}
 window.__btsDismissTransient=dismissTransient;
@@ -1609,10 +1614,10 @@ if(mobile){
    const finish=e=>{
      if(!dragging)return;e?.stopImmediatePropagation?.();const dy=(e?.clientY??sy)-sy;dragging=false;sy=null;dock.style.transition='';dock.style.transform='';
      const was=dock.classList.contains('v10-dock-open');
-     setDock(was?dy<32:dy<-18);
+     if(Math.abs(dy)<8)setDock(!was);else setDock(was?dy<32:dy<-18);
    };
    dock.addEventListener('pointerup',finish,true);dock.addEventListener('pointercancel',finish,true);
-   dockHandle.addEventListener('click',e=>{e.stopImmediatePropagation();setDock(!dock.classList.contains('v10-dock-open'))},true);
+   dockHandle.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation()},true);
  }
 
  // Node/tech acquisition always gets a clean stage.
@@ -1620,6 +1625,17 @@ if(mobile){
    if(e.target.closest('.node,.e14-node,.e15-node,.e16-tech,.e17-tech,.e18-tech,.e19-tech'))dismissTransient();
  },true);
 }
+
+// Keep modal cards visually isolated: no side tab or Active Play underneath.
+const modalSelectors=['#nodeReader','#e14Reader','#e15Reader','#e16Reader','#e17Reader','#e18Reader','#e19Reader','#v10ChallengeOverlay','#v10CinemaOverlay','#v10ArchiveOverlay','#e14Crisis','#e14Final','#e15PrecursorChoice','#e15Barrow','#e15Final','#e16ContactOverlay','#e16Schism','#e17Why','#e17Boredom','#e17Utopia','#e17Final','#e18Ledger','#e18Final','#e19Observed','#e19Origin'];
+function syncModalChrome(){
+ const any=modalSelectors.some(sel=>{const el=q(sel);return el&&!el.classList.contains('hidden')&&!el.classList.contains('v10-hidden')});
+ document.body.classList.toggle('bts-modal-open',any);
+ if(any){closeSheet();setDock(false)}
+}
+const modalObserver=new MutationObserver(syncModalChrome);
+for(const sel of modalSelectors){const el=q(sel);if(el)modalObserver.observe(el,{attributes:true,attributeFilter:['class']})}
+syncModalChrome();
 
 // Wrap every era entry point: auto-dismiss sheets, close popups and play a short scale transition.
 const eraMeta={
