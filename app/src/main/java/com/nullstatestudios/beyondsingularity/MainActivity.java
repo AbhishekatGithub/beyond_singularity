@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
                         ignored -> {
                             if (openSheet) {
                                 view.postDelayed(() -> view.evaluateJavascript(
-                                    "(function(){var b=document.querySelector('#era" + testEra + "App .bts-sheet-tab');if(b){b.click();return true;}return false;})()",
+                                    "(function(){var b=document.querySelector('#btsV13Systems');if(b){b.click();return true;}return false;})()",
                                     null
                                 ), 650);
                             }
