@@ -1,0 +1,12 @@
+{
+  "name": "beyond-singularity-mobile-qa",
+  "private": true,
+  "version": "0.13.0",
+  "scripts": {
+    "qa:mobile": "playwright test",
+    "qa:mobile:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  }
+}
