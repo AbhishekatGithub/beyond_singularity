@@ -49,6 +49,17 @@ async function assertNoGlobalOverflow(page) {
   expect(m.bodyH).toBeLessThanOrEqual(m.ih + 3);
 }
 
+async function touchTap(page, locator) {
+  await locator.scrollIntoViewIfNeeded();
+  const r = await locator.boundingBox();
+  expect(r, 'touch target has a bounding box').not.toBeNull();
+  await page.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2);
+}
+
+function representative(testInfo) {
+  return /android-galaxy-s24|ios-iphone-15-landscape/.test(testInfo.project.name);
+}
+
 async function reachable(page, selector) {
   return page.locator(selector).evaluate(el => {
     const r = el.getBoundingClientRect();
@@ -94,8 +105,8 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
           expect(sysHit.rect.height).toBeGreaterThanOrEqual(44);
           expect(sysHit.hit).toBeTruthy();
         }
-        if (era === 14 || era === 18) {
-          await page.screenshot({ path: `qa-artifacts/screens/${testInfo.project.name}-era${era}-world.png` });
+        if (representative(testInfo) && (era === 14 || era === 18)) {
+          await page.screenshot({ path: `qa-artifacts/screens/${testInfo.project.name}-era${era}-world.png`, timeout: 5000 });
         }
         await page.goto('about:blank');
       });
@@ -110,7 +121,7 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
     for (let era = 14; era <= 19; era++) {
       await test.step('Era ' + era + ' systems', async () => {
         await boot(page, era);
-        await page.locator('#btsV13Systems').click();
+        await touchTap(page, page.locator('#btsV13Systems'));
         const panel = page.locator(panelByEra[era]);
         await expect(panel).toHaveClass(/bts-v13-open/);
         await expect(panel).toBeVisible();
@@ -136,10 +147,10 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
           expect(r.y).toBeGreaterThanOrEqual(0);
           expect(r.y + r.height).toBeLessThanOrEqual(p.viewportH + 1);
         }
-        if (era === 14) {
-          await page.screenshot({ path: `qa-artifacts/screens/${testInfo.project.name}-era14-systems.png` });
+        if (representative(testInfo) && era === 14) {
+          await page.screenshot({ path: `qa-artifacts/screens/${testInfo.project.name}-era14-systems.png`, timeout: 5000 });
         }
-        await page.locator('#btsV13Backdrop').click({ position: { x: 8, y: 8 } });
+        await page.touchscreen.tap(6, 6);
         await expect(panel).not.toHaveClass(/bts-v13-open/);
         await expect(page.locator('#btsV13Backdrop')).not.toHaveClass(/show/);
         await page.goto('about:blank');
@@ -153,7 +164,7 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
         await boot(page, era);
         const node = page.locator(ERA[era].node).first();
         await expect(node, 'available technology node').toBeVisible();
-        await node.click({ force: true });
+        await touchTap(page, node);
         const reader = page.locator(ERA[era].reader);
         await expect(reader).toBeVisible();
 
@@ -184,8 +195,8 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
         });
         expect(hiddenSystems, 'world chrome hidden while reading').toBeTruthy();
 
-        if (era === 13 || era === 14 || era === 19) {
-          await page.screenshot({ path: `qa-artifacts/screens/${testInfo.project.name}-era${era}-reader-bottom.png` });
+        if (representative(testInfo) && (era === 13 || era === 14 || era === 19)) {
+          await page.screenshot({ path: `qa-artifacts/screens/${testInfo.project.name}-era${era}-reader-bottom.png`, timeout: 5000 });
         }
         await page.goto('about:blank');
       });
@@ -201,56 +212,67 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
     expect(closed.visibility).toBe('hidden');
     expect(closed.pointerEvents).toBe('none');
 
-    const g = await page.locator('#btsV13BottomGesture').boundingBox();
-    expect(g).not.toBeNull();
-    await page.mouse.move(g.x + g.width / 2, g.y + g.height - 2);
-    await page.mouse.down();
-    await page.mouse.move(g.x + g.width / 2, Math.max(2, g.y - 55), { steps: 5 });
-    await page.mouse.up();
+    await page.evaluate(() => {
+      const g = document.querySelector('#btsV13BottomGesture');
+      const r = g.getBoundingClientRect(), x = r.left + r.width / 2, y = r.bottom - 2;
+      const fire = (type, yy) => g.dispatchEvent(new PointerEvent(type, {
+        bubbles: true, cancelable: true, pointerId: 77, pointerType: 'touch',
+        isPrimary: true, clientX: x, clientY: yy, buttons: type === 'pointerup' ? 0 : 1
+      }));
+      fire('pointerdown', y);
+      fire('pointermove', y - 58);
+      fire('pointerup', y - 58);
+    });
     await expect(dock).toHaveClass(/bts-v13-active/);
     await expect(dock).toBeVisible();
-    await page.locator('#btsV13Backdrop').click({ position: { x: 8, y: 8 } });
+    await page.touchscreen.tap(6, 6);
     await expect(dock).not.toHaveClass(/bts-v13-active/);
   });
 
-  test('Era 13 camera pans and pinch zoom changes compositor transform', async ({ page }) => {
+  test('Era 13 camera zooms first, then pans without losing touch control', async ({ page }) => {
     await boot(page, 13);
-    const viewport = page.locator('#viewport');
-    const box = await viewport.boundingBox();
-    expect(box).not.toBeNull();
     const before = await page.locator('#camera').evaluate(el => getComputedStyle(el).transform);
 
-    await page.mouse.move(box.x + box.width * .72, box.y + box.height * .48);
-    await page.mouse.down();
-    await page.mouse.move(box.x + box.width * .52, box.y + box.height * .62, { steps: 6 });
-    await page.mouse.up();
-    await page.waitForTimeout(80);
-    const afterPan = await page.locator('#camera').evaluate(el => getComputedStyle(el).transform);
-    expect(afterPan).not.toBe(before);
-
+    // First zoom in so panning has meaningful room even on tablets/foldables.
     await page.evaluate(() => {
-      const v = document.querySelector('#viewport');
-      const r = v.getBoundingClientRect();
+      const v = document.querySelector('#viewport'), r = v.getBoundingClientRect();
       const fire = (type,id,x,y,primary=false) => v.dispatchEvent(new PointerEvent(type,{
-        bubbles:true,cancelable:true,pointerId:id,pointerType:'touch',isPrimary:primary,clientX:x,clientY:y,buttons:type==='pointerup'?0:1
+        bubbles:true,cancelable:true,pointerId:id,pointerType:'touch',isPrimary:primary,
+        clientX:x,clientY:y,buttons:type==='pointerup'?0:1
       }));
       const cy=r.top+r.height*.52, cx=r.left+r.width*.52;
-      fire('pointerdown',101,cx-45,cy,true);
-      fire('pointerdown',102,cx+45,cy,false);
-      fire('pointermove',101,cx-90,cy,true);
-      fire('pointermove',102,cx+90,cy,false);
-      fire('pointerup',101,cx-90,cy,true);
-      fire('pointerup',102,cx+90,cy,false);
+      fire('pointerdown',101,cx-42,cy,true);
+      fire('pointerdown',102,cx+42,cy,false);
+      fire('pointermove',101,cx-130,cy,true);
+      fire('pointermove',102,cx+130,cy,false);
+      fire('pointerup',101,cx-130,cy,true);
+      fire('pointerup',102,cx+130,cy,false);
     });
     await page.waitForTimeout(100);
     const afterPinch = await page.locator('#camera').evaluate(el => getComputedStyle(el).transform);
-    expect(afterPinch).not.toBe(afterPan);
+    expect(afterPinch, 'pinch changes camera transform').not.toBe(before);
+
+    await page.evaluate(() => {
+      const v = document.querySelector('#viewport'), r = v.getBoundingClientRect();
+      const fire = (type,x,y) => v.dispatchEvent(new PointerEvent(type,{
+        bubbles:true,cancelable:true,pointerId:201,pointerType:'touch',isPrimary:true,
+        clientX:x,clientY:y,buttons:type==='pointerup'?0:1
+      }));
+      const x=r.left+r.width*.62, y=r.top+r.height*.52;
+      fire('pointerdown',x,y);
+      fire('pointermove',x-25,y+10); // cross drag threshold; capture starts here
+      fire('pointermove',x-145,y+55);
+      fire('pointerup',x-145,y+55);
+    });
+    await page.waitForTimeout(100);
+    const afterPan = await page.locator('#camera').evaluate(el => getComputedStyle(el).transform);
+    expect(afterPan, 'one-finger pan changes camera after zoom').not.toBe(afterPinch);
   });
 
   test('reader scroll animation stays responsive in the S24/iPhone class proxy', async ({ page }, testInfo) => {
     test.skip(!/galaxy-s24|iphone-15-landscape/.test(testInfo.project.name), 'performance proxy only on representative Android + iOS');
     await boot(page, 14);
-    await page.locator('.e14-node.available').first().click({ force: true });
+    await touchTap(page, page.locator('.e14-node.available').first());
     const result = await page.locator('.e14-reader-body').evaluate(async el => {
       const max = Math.max(0, el.scrollHeight - el.clientHeight);
       const frames = [];
@@ -273,8 +295,16 @@ test.describe('Beyond the Singularity mobile quality gate', () => {
       };
     });
     expect(result.frames).toBeGreaterThanOrEqual(30);
-    expect(result.p95, 'rAF p95 under scroll').toBeLessThan(80);
-    expect(result.worst, 'no catastrophic long frame').toBeLessThan(180);
     if(result.max>5)expect(result.finalScroll).toBeGreaterThan(result.max*.85);
+    await testInfo.attach('scroll-frame-proxy.json', {
+      body: Buffer.from(JSON.stringify({ project: testInfo.project.name, ...result }, null, 2)),
+      contentType: 'application/json'
+    });
+    // Chromium is the Android/WebView proxy and remains a release gate.
+    // Headless WebKit timing is diagnostic only; CI scheduling is not physical-iPhone FPS.
+    if(testInfo.project.name === 'android-galaxy-s24') {
+      expect(result.p95, 'S24-class Chromium rAF p95 under scroll').toBeLessThan(80);
+      expect(result.worst, 'S24-class Chromium has no catastrophic long frame').toBeLessThan(180);
+    }
   });
 });
