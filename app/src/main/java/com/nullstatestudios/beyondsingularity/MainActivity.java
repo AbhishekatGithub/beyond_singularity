@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 int testEra = getIntent().getIntExtra("bts_test_era", 13);
                 boolean openSheet = getIntent().getBooleanExtra("bts_test_sheet", false);
+                boolean openReader = getIntent().getBooleanExtra("bts_test_reader", false);
                 if (testEra >= 14 && testEra <= 19) {
                     view.evaluateJavascript(
                         "(function(){var f=window['enterEra" + testEra + "'];if(typeof f==='function'){f();return true;}return false;})()",
@@ -78,6 +79,38 @@ public class MainActivity extends Activity {
                             }
                         }
                     );
+                }
+                if (openReader && testEra >= 13 && testEra <= 19) {
+                    String[] nodeSelectors = {
+                        "", "", "", "", "", "", "", "", "", "", "", "", "",
+                        ".node.available",
+                        ".e14-node.available",
+                        ".e15-node.available",
+                        ".e16-tech.available",
+                        ".e17-tech.available",
+                        ".e18-tech.available",
+                        ".e19-tech.available"
+                    };
+                    String[] scrollSelectors = {
+                        "", "", "", "", "", "", "", "", "", "", "", "", "",
+                        ".reader-body",
+                        ".e14-reader-body",
+                        ".e15-reader-body",
+                        ".e16-reader-body",
+                        ".e17-reader-body",
+                        ".e18-reader-body",
+                        ".e19-reader-body"
+                    };
+                    final String nodeSelector = nodeSelectors[testEra];
+                    final String scrollSelector = scrollSelectors[testEra];
+                    view.postDelayed(() -> view.evaluateJavascript(
+                        "(function(){var n=document.querySelector('" + nodeSelector + "');if(n){n.click();return true;}return false;})()",
+                        null
+                    ), testEra >= 14 ? 850 : 500);
+                    view.postDelayed(() -> view.evaluateJavascript(
+                        "(function(){var s=document.querySelector('" + scrollSelector + "');if(s){s.scrollTop=s.scrollHeight;return s.scrollTop;}return -1;})()",
+                        null
+                    ), testEra >= 14 ? 1300 : 950);
                 }
             }
         });
