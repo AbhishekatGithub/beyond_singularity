@@ -1545,7 +1545,7 @@ function refreshEra(){
  const spec=panels[n];systems.style.display=spec?'block':'none';if(spec)systems.textContent=spec[1];
  closeTransient();audio.setEra(n)
 }
-const eraEls=['#era14App','#era15App','#era16App','#era17App','#era18App','#era19App'].map(q).filter(Boolean);
+const eraEls=['#era14App','#era15App','#era16App','#era17App','#era18App','#era19App'].map(sel=>q(sel)).filter(Boolean);
 const eraObserver=new MutationObserver(refreshEra);eraEls.forEach(el=>eraObserver.observe(el,{attributes:true,attributeFilter:['class']}));
 refreshEra();if(panels[current]){systems.style.display='block';systems.textContent=panels[current][1]}else systems.style.display='none';
 audio.era=current;
