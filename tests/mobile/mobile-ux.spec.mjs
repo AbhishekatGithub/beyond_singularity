@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+fs.mkdirSync('qa-artifacts/screens', { recursive: true });
 
 const ERA = {
   13: { app: '#app', node: '.node.available', reader: '#nodeReader', scroll: '.reader-body', cta: '#readerBuy' },
