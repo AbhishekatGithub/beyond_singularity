@@ -660,13 +660,13 @@ function setCam(){if(!camRAF)camRAF=requestAnimationFrame(applyCam)}
 function focus(x,y){const v=mapViewport.getBoundingClientRect();camX=v.width/2-x*zoom;camY=v.height/2-y*zoom;setCam()}
 function focusNext(){const n=nodes.find(n=>available(n)&&n.id!=='dark'&&timelineVisible(n));if(n){focus(n.x,n.y);selectNode(n.id)}}
 function pointerPair(){return [...mapPointers.values()].slice(0,2)}
-mapViewport.addEventListener('pointerdown',e=>{if(e.target.closest('#tapCore'))return;mapPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});try{mapViewport.setPointerCapture(e.pointerId)}catch(_){}
- if(mapPointers.size===1){drag={x:e.clientX,y:e.clientY,cx:camX,cy:camY,moved:false,lastX:e.clientX,lastY:e.clientY}}
- else if(mapPointers.size===2){const [a,b]=pointerPair(),r=mapViewport.getBoundingClientRect(),mx=(a.x+b.x)/2-r.left,my=(a.y+b.y)/2-r.top;pinch={dist:Math.max(20,Math.hypot(a.x-b.x,a.y-b.y)),zoom,worldX:(mx-camX)/zoom,worldY:(my-camY)/zoom};drag=null}
+mapViewport.addEventListener('pointerdown',e=>{if(e.target.closest('#tapCore'))return;mapPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(mapPointers.size===1){drag={x:e.clientX,y:e.clientY,cx:camX,cy:camY,moved:false,lastX:e.clientX,lastY:e.clientY,pointerId:e.pointerId}}
+ else if(mapPointers.size===2){const [a,b]=pointerPair(),r=mapViewport.getBoundingClientRect(),mx=(a.x+b.x)/2-r.left,my=(a.y+b.y)/2-r.top;pinch={dist:Math.max(20,Math.hypot(a.x-b.x,a.y-b.y)),zoom,worldX:(mx-camX)/zoom,worldY:(my-camY)/zoom};drag=null;for(const id of mapPointers.keys())try{mapViewport.setPointerCapture(id)}catch(_){}}
  mapViewport.classList.add('dragging')});
 mapViewport.addEventListener('pointermove',e=>{if(!mapPointers.has(e.pointerId))return;mapPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
  if(mapPointers.size>=2&&pinch){const [a,b]=pointerPair(),r=mapViewport.getBoundingClientRect(),dist=Math.max(20,Math.hypot(a.x-b.x,a.y-b.y)),mx=(a.x+b.x)/2-r.left,my=(a.y+b.y)/2-r.top;zoom=Math.max(minZoom,Math.min(maxZoom,pinch.zoom*(dist/pinch.dist)));camX=mx-pinch.worldX*zoom;camY=my-pinch.worldY*zoom;setCam();suppressMapClickUntil=performance.now()+260;return}
- if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;if(drag.moved){camX=drag.cx+dx;camY=drag.cy+dy;setCam();suppressMapClickUntil=performance.now()+260}});
+ if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)>5){drag.moved=true;try{mapViewport.setPointerCapture(drag.pointerId)}catch(_){}}if(drag.moved){camX=drag.cx+dx;camY=drag.cy+dy;setCam();suppressMapClickUntil=performance.now()+260}});
 function endMapPointer(e){mapPointers.delete(e.pointerId);if(drag?.moved)suppressMapClickUntil=performance.now()+260;drag=null;pinch=null;if(mapPointers.size===0)mapViewport.classList.remove('dragging')}
 mapViewport.addEventListener('pointerup',endMapPointer);mapViewport.addEventListener('pointercancel',endMapPointer);
 mapViewport.addEventListener('click',e=>{if(performance.now()<suppressMapClickUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
