@@ -1,18 +1,72 @@
-name: Build Android Test APK
+name: Mobile QA + Android Test APK
 
 on:
   workflow_dispatch:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "30 2 * * 1"
 
 jobs:
+  mobile-browser-qa:
+    name: Cross-device Chromium + WebKit QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install QA dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Validate embedded JavaScript
+        run: |
+          node <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
+          const scripts=html.split('<script').slice(1).map(chunk=>{
+            const gt=chunk.indexOf('>');
+            const close=chunk.indexOf('</script>');
+            return gt>=0&&close>gt?chunk.slice(gt+1,close):'';
+          }).filter(src=>src.trim());
+          scripts.forEach((src,i)=>new vm.Script(src,{filename:'inline-'+(i+1)+'.js'}));
+          console.log('Validated '+scripts.length+' inline scripts');
+          NODE
+
+      - name: Run mobile behavior matrix
+        run: npm run qa:mobile
+
+      - name: Upload mobile QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-browser-qa-\${{ github.run_number }}
+          path: |
+            playwright-report
+            qa-artifacts
+          if-no-files-found: warn
+          retention-days: 14
+
   build-debug-apk:
+    name: Build Android APK after browser QA
+    needs: mobile-browser-qa
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java 17
         uses: actions/setup-java@v5
@@ -29,20 +83,6 @@ jobs:
       - name: Install Android platform
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Validate embedded JavaScript
-        run: |
-          node <<'NODE'
-          const fs=require('fs'),vm=require('vm');
-          const html=fs.readFileSync('app/src/main/assets/index.html','utf8');
-          const scripts=html.split('<script').slice(1).map(chunk=>{
-            const gt=chunk.indexOf('>');
-            const close=chunk.indexOf('</script>');
-            return gt>=0&&close>gt?chunk.slice(gt+1,close):'';
-          }).filter(src=>src.trim());
-          scripts.forEach((src,i)=>new vm.Script(src,{filename:'inline-'+(i+1)+'.js'}));
-          console.log('Validated '+scripts.length+' inline scripts');
-          NODE
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -57,4 +97,50 @@ jobs:
           name: beyond-the-singularity-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          retention-days: 14
+
+  android-native-smoke:
+    name: Native Android WebView QA · API \${{ matrix.api }}
+    needs: build-debug-apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [30, 35]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download built APK
+        uses: actions/download-artifact@v4
+        with:
+          name: beyond-the-singularity-debug-apk
+          path: app/build/outputs/apk/debug
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm || true
+
+      - name: Run native Android layout and Back-stack QA
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: \${{ matrix.api }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: bash tools/emulator-layout-test.sh native-qa-api\${{ matrix.api }}
+
+      - name: Upload native Android evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-android-qa-api\${{ matrix.api }}-\${{ github.run_number }}
+          path: native-qa-api\${{ matrix.api }}
+          if-no-files-found: warn
           retention-days: 14
