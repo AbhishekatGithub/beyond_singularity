@@ -1522,7 +1522,7 @@ const audio={
   this.timer=setTimeout(()=>this.schedule(),p.cycle*1000)
  },
  setEra(n){if(this.era===n)return;this.era=n;if(this.on)this.sting(n);this.schedule()},
- toggle(){this.on=!this.on;localStorage.setItem('bts-v13-audio',this.on?'on':'off');if(this.master&&this.ctx)this.master.gain.setTargetAtTime(this.on?.65:.0001,this.ctx.currentTime,.08);audioBtn.textContent=this.on?'♫':'×';if(this.on){this.ensure();this.sting(current);this.schedule()}else clearTimeout(this.timer)}
+ toggle(){this.on=!this.on;localStorage.setItem('bts-v13-audio',this.on?'on':'off');if(this.master&&this.ctx)this.master.gain.setTargetAtTime(this.on ? .65 : .0001,this.ctx.currentTime,.08);audioBtn.textContent=this.on?'♫':'×';if(this.on){this.ensure();this.sting(current);this.schedule()}else clearTimeout(this.timer)}
 };
 audioBtn.textContent=audio.on?'♫':'×';audioBtn.addEventListener('click',()=>audio.toggle());
 document.addEventListener('pointerdown',()=>{if(audio.on){audio.ensure();audio.setEra(current)}},{once:true});
