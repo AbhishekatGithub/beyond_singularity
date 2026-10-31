@@ -51,7 +51,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-browser-qa-\${{ github.run_number }}
+          name: mobile-browser-qa-${{ github.run_number }}
           path: |
             playwright-report
             qa-artifacts
@@ -100,7 +100,7 @@ jobs:
           retention-days: 14
 
   android-native-smoke:
-    name: Native Android WebView QA · API \${{ matrix.api }}
+    name: Native Android WebView QA · API ${{ matrix.api }}
     needs: build-debug-apk
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -128,19 +128,19 @@ jobs:
       - name: Run native Android layout and Back-stack QA
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: \${{ matrix.api }}
+          api-level: ${{ matrix.api }}
           target: google_apis
           arch: x86_64
           profile: pixel_6
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: bash tools/emulator-layout-test.sh native-qa-api\${{ matrix.api }}
+          script: bash tools/emulator-layout-test.sh native-qa-api${{ matrix.api }}
 
       - name: Upload native Android evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: native-android-qa-api\${{ matrix.api }}-\${{ github.run_number }}
-          path: native-qa-api\${{ matrix.api }}
+          name: native-android-qa-api${{ matrix.api }}-${{ github.run_number }}
+          path: native-qa-api${{ matrix.api }}
           if-no-files-found: warn
           retention-days: 14
